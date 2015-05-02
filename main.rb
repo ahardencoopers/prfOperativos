@@ -10,6 +10,9 @@ so = Manejador.new()
 
 archivo = File.open("datos.txt","r")
 
+memReal.arrMarcos[0].idProceso = 1
+memReal.arrMarcos[2].idProceso = 1
+
 archivo.each do
 	|line|
 	arrComando = so.recibComando(line)
@@ -19,9 +22,4 @@ archivo.each do
 	elsif arrComando[0] == nil
 		puts "Instruccion invalida #{arrComando[1]}"
 	end
-end
-
-memReal.arrMarcos.each do
-		|item|
-		puts item.idProceso
 end

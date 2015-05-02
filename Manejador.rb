@@ -53,7 +53,7 @@ class Manejador
 
 	def asignarMarcos(proceso, memReal, memSwap)
 		if proceso.cantPaginas <= memReal.dispMarcos
-			puts "Alojar marcos"
+			puts "Alojar marcos para proceso #{proceso.id}"
 			marcoRealActual = 0
 			while proceso.marcosRealAsig < proceso.cantPaginas do
 				if memReal.arrMarcos[marcoRealActual].idProceso == -1
@@ -64,6 +64,7 @@ class Manejador
 					memReal.dispMarcos = memReal.dispMarcos - 1
 					memReal.ocupMarcos = memReal.ocupMarcos + 1
 					proceso.marcosRealAsig = proceso.marcosRealAsig + 1
+					puts "Se alojo marco real #{marcoRealActual} para pagina #{proceso.marcosRealAsig-1}"
 				end
 				marcoRealActual = marcoRealActual + 1
 			end
