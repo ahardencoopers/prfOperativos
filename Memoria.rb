@@ -1,3 +1,5 @@
+require './Marco'
+
 class Memoria
 	def initialize(cantBytes, tamPagina)
 		@cantBytes = Integer(cantBytes)
@@ -19,6 +21,11 @@ class Memoria
 
 
 		@arrMarcos = Array.new(@cantMarcos)
+		@cantMarcos.times do
+			|i|
+			marcoTemp = Marco.new(-1, -1, -1)
+			@arrMarcos[i] = marcoTemp
+		end
 		@dispMarcos = @arrMarcos.size
 		@ocupMarcos = 0
 	end
@@ -45,6 +52,15 @@ class Memoria
 	end
 
 	def ocupMarcos
-		@ocup
+		@ocupMarcos
+	end
+
+	#Metodos set
+	def dispMarcos=(dispMarcos)
+		@dispMarcos = dispMarcos
+	end
+
+	def ocupMarcos=(ocupMarcos)
+		@ocupMarcos = ocupMarcos
 	end
 end

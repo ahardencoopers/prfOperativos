@@ -1,5 +1,3 @@
-require './TablaPaginas'
-
 class Proceso
 	def initialize(id, cantBytes, tamMarcos)
 		@id = id
@@ -15,7 +13,7 @@ class Proceso
 			@cantPaginas = 1
 		end
 
-		@tablaPaginas = TablaPaginas.new(@cantPaginas)
+		@tablaPaginas = Array.new()
 
 		@marcosRealAsig = 0
 		@marcosSwapAsig = 0
