@@ -55,6 +55,21 @@ class Memoria
 		@ocupMarcos
 	end
 
+	def indiceMarcoViejo
+		timestampTemp = @arrMarcos[0].timestampCarga
+		i=0
+		iMayor=0
+		@arrMarcos.size.times do
+			timestampMarcoActual = @arrMarcos[i].timestampCarga
+			if timestampMarcoActual > timestampTemp
+				iMayor = i
+				timestampTemp = @arrMarcos[i].timestampCarga
+			end
+			i = i+1
+		end
+		return iMayor
+	end
+
 	#Metodos set
 	def dispMarcos=(dispMarcos)
 		@dispMarcos = dispMarcos

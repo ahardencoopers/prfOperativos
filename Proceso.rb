@@ -50,6 +50,16 @@ class Proceso
 		@faultsCausados
 	end
 
+	def indicePagina(indiceMarcoReal)
+		i=0
+		@tablaPaginas.size.times do
+			if @tablaPaginas[i].marcoReal == indiceMarcoReal
+				return @tablaPaginas[i]
+			end
+			i = i+1
+		end
+	end
+
 	#Metodos set
 	def cantBytes=(cantBytes)
 		@cantBytes = cantBytes

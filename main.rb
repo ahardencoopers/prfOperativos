@@ -4,14 +4,15 @@ require './Pagina'
 require './Proceso'
 require './Manejador'
 
+def timestamp
+	Time.now.to_i
+end
+
 memReal = Memoria.new(64, 8)
 memSwap = Memoria.new(64, 8)
 so = Manejador.new()
 
 archivo = File.open("datos.txt","r")
-
-memReal.arrMarcos[0].idProceso = 1
-memReal.arrMarcos[2].idProceso = 1
 
 archivo.each do
 	|line|

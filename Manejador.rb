@@ -12,6 +12,10 @@ class Manejador
 		@listaProcesos
 	end
 
+	def timestamp
+		Time.now.to_i
+	end
+
 	def recibComando(comando)
 			arrComando = comando.split()
 			arrTemp = Array.new()
@@ -58,7 +62,7 @@ class Manejador
 			while proceso.marcosRealAsig < proceso.cantPaginas do
 				if memReal.arrMarcos[marcoRealActual].idProceso == -1
 					paginaTemp = Pagina.new(marcoRealActual)
-					marcoTemp = Marco.new(proceso.id, 0, 0)
+					marcoTemp = Marco.new(proceso.id, 0, self.timestamp())
 					memReal.arrMarcos[marcoRealActual] = marcoTemp
 					proceso.tablaPaginas.push(paginaTemp)
 					memReal.dispMarcos = memReal.dispMarcos - 1
@@ -70,6 +74,26 @@ class Manejador
 			end
 		else
 			puts "F2C"
+#			marcosNecesitados = proceso.cantPaginas - memReal.dispMarcos
+#			self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+#			self.asignarMarcos(proceso, memReal, memSwap)
+		end
+	end
+
+	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+
+		while marcosNecesitados > memReal.dispMarcos do
+			iViejo = memReal.indiceMarcoViejo
+			if memReal.arrMarcos[iViejo].fueAccesado == 1
+				puts "2nd chance"
+				memReal.arrMarcos[iViejo].fueAccesado = 0
+				memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
+			elsif memReal.arrMarcos[iViejo].fueAccesado == 0
+				puts "swap"
+				marcoTemp = Marco.new(proceso.id, 0, proceso.timestampCarga)
+				paginaCambiar = proceso.indicePagina(iViejo)
+
+			end
 		end
 	end
 
