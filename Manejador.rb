@@ -5,6 +5,7 @@ require './Pagina'
 class Manejador
 	def initialize()
 		@listaProcesos = Array.new()
+		@procesosBloqueados = Array.new()
 	end
 
 	#Metodos get
@@ -76,40 +77,51 @@ class Manejador
 		else
 			puts "F2C"
 			marcosNecesitados = proceso.cantPaginas
-			self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-			self.asignarMarcos(proceso, memReal, memSwap)
+			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+				self.asignarMarcos(proceso, memReal, memSwap)
+			end
 		end
 	end
 
 	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-		while marcosNecesitados > memReal.dispMarcos do
-		puts "marcosNecesitados #{marcosNecesitados}"
-		puts "marcosDisp #{memReal.dispMarcos}"
-			iViejo = memReal.indiceMarcoViejo
-			idProcesoViejo = memReal.arrMarcos[iViejo].idProceso
-			puts "idViejo #{memReal.arrMarcos[iViejo].idProceso}"
-			if memReal.arrMarcos[iViejo].fueAccesado == 1 && memReal.arrMarcos[iViejo].idProceso != -1
-				puts "2nd chance"
-				memReal.arrMarcos[iViejo].fueAccesado = 0
-				memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
-			elsif memReal.arrMarcos[iViejo].fueAccesado == 0 && memReal.arrMarcos[iViejo].idProceso != -1
-				puts "swap"
-				procesoViejo = self.getProceso(idProcesoViejo)
-				procesoViejo.marcosRealAsig = procesoViejo.marcosRealAsig - 1
-				procesoViejo.marcosSwapAsig = procesoViejo.marcosSwapAsig + 1
-				marcoTemp = Marco.new(procesoViejo.id, 0, self.timestamp)
-				marcoSwap = self.ponerMarco(marcoTemp, memSwap)
-				paginaActualizar = procesoViejo.indicePagina(iViejo)
-				paginaActualizar.marcoReal = -1
-				paginaActualizar.marcoSwap = marcoSwap
-				paginaActualizar.cargada = 0
-				paginaActualizar.cargada = -1
-				memReal.arrMarcos[iViejo].idProceso = -1
-				memReal.arrMarcos[iViejo].fueAccesado = 0
-				memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
-				memReal.dispMarcos = memReal.dispMarcos + 1
-				memReal.ocupMarcos = memReal.ocupMarcos - 1
+		puts "Se necesita realizar swapping para proceso #{proceso.id}"
+		if memSwap.dispMarcos >= marcosNecesitados
+			while marcosNecesitados > memReal.dispMarcos do
+				iViejo = memReal.indiceMarcoViejo
+				idProcesoViejo = memReal.arrMarcos[iViejo].idProceso
+				if memReal.arrMarcos[iViejo].fueAccesado == 1 && memReal.arrMarcos[iViejo].idProceso != -1
+					puts "2nd chance"
+					memReal.arrMarcos[iViejo].fueAccesado = 0
+					memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
+				elsif memReal.arrMarcos[iViejo].fueAccesado == 0 && memReal.arrMarcos[iViejo].idProceso != -1
+					puts "swap"
+					procesoViejo = self.getProceso(idProcesoViejo)
+					procesoViejo.marcosRealAsig = procesoViejo.marcosRealAsig - 1
+					procesoViejo.marcosSwapAsig = procesoViejo.marcosSwapAsig + 1
+					marcoTemp = Marco.new(procesoViejo.id, 0, self.timestamp)
+					marcoSwap = self.ponerMarco(marcoTemp, memSwap)
+					indicePaginaVieja = 0
+					paginaActualizar = procesoViejo.indicePagina(iViejo, indicePaginaVieja)
+					paginaActualizar.marcoReal = -1
+					paginaActualizar.marcoSwap = marcoSwap
+					paginaActualizar.cargada = 0
+					paginaActualizar.cargada = -1
+					memReal.arrMarcos[iViejo].idProceso = -1
+					memReal.arrMarcos[iViejo].fueAccesado = 0
+					memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
+					memReal.dispMarcos = memReal.dispMarcos + 1
+					memReal.ocupMarcos = memReal.ocupMarcos - 1
+					memSwap.dispMarcos = memSwap.dispMarcos - 1
+					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
+					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
+					puts "Quedo en marco de swap #{marcoSwap}"
+					return true
+				end
 			end
+		else
+			puts "No queda memoria en swap, bloqueando proceso #{proceso.id}"
+			@procesosBloqueados.push(proceso)
+			return false
 		end
 	end
 

@@ -9,7 +9,7 @@ def timestamp
 end
 
 memReal = Memoria.new(64, 8)
-memSwap = Memoria.new(128, 8)
+memSwap = Memoria.new(32, 8)
 so = Manejador.new()
 
 archivo = File.open("datos.txt","r")
@@ -19,6 +19,27 @@ archivo.each do
 	arrComando = so.recibComando(line)
 
 	if arrComando[0] == 'p' || arrComando[0] == 'P'
+		puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
+		so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
+		sleep(1)
+	elsif arrComando[0] == nil
+		puts "Instruccion invalida #{arrComando[1]}"
+	end
+end
+
+puts memReal.arrMarcos[0].fueAccesado = 1
+puts memReal.arrMarcos[1].fueAccesado = 1
+puts memReal.arrMarcos[2].fueAccesado = 1
+puts memReal.arrMarcos[3].fueAccesado = 1
+
+archivo = File.open("datos2.txt", "r")
+
+archivo.each do
+	|line|
+	arrComando = so.recibComando(line)
+
+	if arrComando[0] == 'p' || arrComando[0] == 'P'
+		puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
 		so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
 		sleep(1)
 	elsif arrComando[0] == nil
@@ -29,7 +50,7 @@ end
 puts "memReal"
 memReal.arrMarcos.each do
 	|item|
-	puts "#{item.idProceso} #{item.timestampCarga}"
+	puts "#{item.idProceso} #{item.timestampCarga} #{item.fueAccesado}"
 end
 
 

@@ -50,10 +50,11 @@ class Proceso
 		@faultsCausados
 	end
 
-	def indicePagina(indiceMarcoReal)
+	def indicePagina(indiceMarcoReal, indiceTablaPaginas)
 		i=0
 		@tablaPaginas.size.times do
 			if @tablaPaginas[i].marcoReal == indiceMarcoReal
+				indiceTablaPaginas = i
 				return @tablaPaginas[i]
 			end
 			i = i+1
