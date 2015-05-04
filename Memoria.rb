@@ -61,7 +61,7 @@ class Memoria
 		iMayor=0
 		@arrMarcos.size.times do
 			timestampMarcoActual = @arrMarcos[i].timestampCarga
-			if timestampMarcoActual > timestampTemp
+			if timestampMarcoActual < timestampTemp && @arrMarcos[i].idProceso != -1
 				iMayor = i
 				timestampTemp = @arrMarcos[i].timestampCarga
 			end

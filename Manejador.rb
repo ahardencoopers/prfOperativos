@@ -59,7 +59,8 @@ class Manejador
 		if proceso.cantPaginas <= memReal.dispMarcos
 			puts "Alojar marcos para proceso #{proceso.id}"
 			marcoRealActual = 0
-			while proceso.marcosRealAsig < proceso.cantPaginas do
+			while proceso.marcosRealAsig < proceso.cantPaginas && marcoRealActual < memReal.arrMarcos.size do
+				puts marcoRealActual
 				if memReal.arrMarcos[marcoRealActual].idProceso == -1
 					paginaTemp = Pagina.new(marcoRealActual)
 					marcoTemp = Marco.new(proceso.id, 0, self.timestamp())
@@ -74,26 +75,62 @@ class Manejador
 			end
 		else
 			puts "F2C"
-#			marcosNecesitados = proceso.cantPaginas - memReal.dispMarcos
-#			self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-#			self.asignarMarcos(proceso, memReal, memSwap)
+			marcosNecesitados = proceso.cantPaginas
+			self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+			self.asignarMarcos(proceso, memReal, memSwap)
 		end
 	end
 
 	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-
 		while marcosNecesitados > memReal.dispMarcos do
+		puts "marcosNecesitados #{marcosNecesitados}"
+		puts "marcosDisp #{memReal.dispMarcos}"
 			iViejo = memReal.indiceMarcoViejo
-			if memReal.arrMarcos[iViejo].fueAccesado == 1
+			idProcesoViejo = memReal.arrMarcos[iViejo].idProceso
+			puts "idViejo #{memReal.arrMarcos[iViejo].idProceso}"
+			if memReal.arrMarcos[iViejo].fueAccesado == 1 && memReal.arrMarcos[iViejo].idProceso != -1
 				puts "2nd chance"
 				memReal.arrMarcos[iViejo].fueAccesado = 0
 				memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
-			elsif memReal.arrMarcos[iViejo].fueAccesado == 0
+			elsif memReal.arrMarcos[iViejo].fueAccesado == 0 && memReal.arrMarcos[iViejo].idProceso != -1
 				puts "swap"
-				marcoTemp = Marco.new(proceso.id, 0, proceso.timestampCarga)
-				paginaCambiar = proceso.indicePagina(iViejo)
-
+				procesoViejo = self.getProceso(idProcesoViejo)
+				procesoViejo.marcosRealAsig = procesoViejo.marcosRealAsig - 1
+				procesoViejo.marcosSwapAsig = procesoViejo.marcosSwapAsig + 1
+				marcoTemp = Marco.new(procesoViejo.id, 0, self.timestamp)
+				marcoSwap = self.ponerMarco(marcoTemp, memSwap)
+				paginaActualizar = procesoViejo.indicePagina(iViejo)
+				paginaActualizar.marcoReal = -1
+				paginaActualizar.marcoSwap = marcoSwap
+				paginaActualizar.cargada = 0
+				paginaActualizar.cargada = -1
+				memReal.arrMarcos[iViejo].idProceso = -1
+				memReal.arrMarcos[iViejo].fueAccesado = 0
+				memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
+				memReal.dispMarcos = memReal.dispMarcos + 1
+				memReal.ocupMarcos = memReal.ocupMarcos - 1
 			end
+		end
+	end
+
+	def ponerMarco(marco, memoria)
+		i=0
+		memoria.arrMarcos.size.times do
+			if memoria.arrMarcos[i].idProceso == -1
+				memoria.arrMarcos[i] = marco
+				return i
+			end
+			i = i+1
+		end
+	end
+
+	def getProceso(id)
+		i = 0
+		@listaProcesos.size.times do
+			if @listaProcesos[i].id == id
+				return @listaProcesos[i]
+			end
+			i = i+1
 		end
 	end
 
