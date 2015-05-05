@@ -9,7 +9,7 @@ def timestamp
 end
 
 memReal = Memoria.new(64, 8)
-memSwap = Memoria.new(32, 8)
+memSwap = Memoria.new(80, 8)
 so = Manejador.new()
 
 archivo = File.open("datos.txt","r")

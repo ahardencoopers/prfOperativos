@@ -66,6 +66,10 @@ class Proceso
 		@cantBytes = cantBytes
 	end
 
+	def cantPaginas=(cantPaginas)
+		@cantPaginas = cantPaginas
+	end
+
 	def marcosRealAsig=(marcosRealAsig)
 		@marcosRealAsig = marcosRealAsig
 	end
@@ -76,5 +80,10 @@ class Proceso
 
 	def faultsCausados=(faultsCausados)
 		@faultsCausados = faultsCausados
+	end
+
+	def desplegarProceso
+		puts "id=#{@id} cB=#{@cantBytes} cP=#{@cantPaginas}"
+		puts "mR=#{@marcosRealAsig} mS=#{@marcosSwapAsig}"
 	end
 end

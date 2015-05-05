@@ -48,7 +48,14 @@ class Manejador
 		end
 
 		if procesoExiste
-			puts "Error al cargar proceso. Ya existe."
+			puts "Proceso #{idProceso} pide #{Integer(cantBytes)/8} marcos mas."
+			procesoTemp = self.getProceso(idProceso)
+			procesoTemp.desplegarProceso
+			procesoTemp.cantBytes = procesoTemp.cantBytes + Integer(cantBytes)
+			procesoTemp.cantPaginas = procesoTemp.cantBytes/8
+			procesoTemp.desplegarProceso
+			puts procesoTemp.marcosRealAsig
+			self.asignarMarcos(procesoTemp, memReal, memSwap)
 		else
 			procesoTemp = Proceso.new(idProceso, cantBytes, 8)
 			@listaProcesos.push(procesoTemp)
@@ -57,7 +64,10 @@ class Manejador
 	end
 
 	def asignarMarcos(proceso, memReal, memSwap)
-		if proceso.cantPaginas <= memReal.dispMarcos
+		puts "dispMarcos #{memReal.dispMarcos}"
+		cantPideMarcos = proceso.cantPaginas-proceso.marcosRealAsig
+		puts "cantPideMarcos #{cantPideMarcos}"
+		if cantPideMarcos <= memReal.dispMarcos
 			puts "Alojar marcos para proceso #{proceso.id}"
 			marcoRealActual = 0
 			while proceso.marcosRealAsig < proceso.cantPaginas && marcoRealActual < memReal.arrMarcos.size do
@@ -76,7 +86,7 @@ class Manejador
 			end
 		else
 			puts "F2C"
-			marcosNecesitados = proceso.cantPaginas
+			marcosNecesitados = cantPideMarcos
 			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 				self.asignarMarcos(proceso, memReal, memSwap)
 			end
@@ -89,6 +99,7 @@ class Manejador
 			while marcosNecesitados > memReal.dispMarcos do
 				iViejo = memReal.indiceMarcoViejo
 				idProcesoViejo = memReal.arrMarcos[iViejo].idProceso
+				puts "fueAccesado p=#{idProcesoViejo} m=#{iViejo} a=#{memReal.arrMarcos[iViejo].fueAccesado}"
 				if memReal.arrMarcos[iViejo].fueAccesado == 1 && memReal.arrMarcos[iViejo].idProceso != -1
 					puts "2nd chance"
 					memReal.arrMarcos[iViejo].fueAccesado = 0
