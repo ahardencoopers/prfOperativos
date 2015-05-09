@@ -7,11 +7,7 @@ class Proceso
 			@cantBytes = 1
 		end
 
-		@cantPaginas = @cantBytes/Integer(tamMarcos)
-
-		if @cantPaginas < 0
-			@cantPaginas = 1
-		end
+		@cantPaginas = @cantBytes.fdiv(Integer(tamMarcos)).ceil
 
 		@tablaPaginas = Array.new()
 

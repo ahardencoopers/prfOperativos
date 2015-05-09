@@ -20,16 +20,16 @@ class Manejador
 	def recibComando(comando)
 			arrComando = comando.split()
 			arrTemp = Array.new()
-			if arrComando[0] == "p" || arrComando[0] == "P"
+			if arrComando[0].upcase == 'P'
 				arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
 				return arrTemp
-			elsif arrComando[0] == "a" || arrComando[0] == "A"
+			elsif arrComando[0].upcase == 'A'
 				puts "Instr A"
-			elsif arrComando[0] == "l" || arrComando[0] == "L"
+			elsif arrComando[0].upcase == 'L'
 				puts "Instr L"
-			elsif arrComando[0] == "f" || arrComando[0] == "F"
+			elsif arrComando[0].upcase == 'F'
 				puts "Instr F"
-			elsif arrComando[0] == "e" || arrComando[0] == "E"
+			elsif arrComando[0].upcase == 'E'
 				puts "Instr E"
 			else
 				return arrTemp.push(nil, arrComando[0])
@@ -48,11 +48,11 @@ class Manejador
 		end
 
 		if procesoExiste
-			puts "Proceso #{idProceso} pide #{Integer(cantBytes)/8} marcos mas."
+			puts "Proceso #{idProceso} pide #{Integer(cantBytes).fdiv(8).ceil} marcos mas."
 			procesoTemp = self.getProceso(idProceso)
 			procesoTemp.desplegarProceso
 			procesoTemp.cantBytes = procesoTemp.cantBytes + Integer(cantBytes)
-			procesoTemp.cantPaginas = procesoTemp.cantBytes/8
+			procesoTemp.cantPaginas = procesoTemp.cantBytes.fdiv(8).ceil
 			procesoTemp.desplegarProceso
 			puts procesoTemp.marcosRealAsig
 			self.asignarMarcos(procesoTemp, memReal, memSwap)
