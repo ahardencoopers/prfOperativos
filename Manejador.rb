@@ -20,16 +20,19 @@ class Manejador
 	def recibComando(comando)
 			arrComando = comando.split()
 			arrTemp = Array.new()
-			if arrComando[0].upcase == 'P'
+			if arrComando[0] == "p" || arrComando[0] == "P" # Existe
 				arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
 				return arrTemp
-			elsif arrComando[0].upcase == 'A'
-				puts "Instr A"
-			elsif arrComando[0].upcase == 'L'
+			elsif arrComando[0] == "a" || arrComando[0] == "A" # Existe
+				# MODIFICADO
+				arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
+				return arrTemp
+				#puts "Instr A"
+			elsif arrComando[0] == "l" || arrComando[0] == "L" # Liberar - No Existe
 				puts "Instr L"
-			elsif arrComando[0].upcase == 'F'
+			elsif arrComando[0] == "f" || arrComando[0] == "F" # Fin - No Existe
 				puts "Instr F"
-			elsif arrComando[0].upcase == 'E'
+			elsif arrComando[0] == "e" || arrComando[0] == "E" # Exit - No Existe
 				puts "Instr E"
 			else
 				return arrTemp.push(nil, arrComando[0])
@@ -62,13 +65,33 @@ class Manejador
 			self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
 		end
 	end
+	
+	def accederProceso(direccion, idProceso, bitReferencia)
+		procesoExiste = false;
+		
+		@listaProcesos.each do
+			|proceso|
+			if proceso.id == idProceso
+				procesoExiste = true
+			end
+		end
+		
+		if procesoExiste
+			puts "El proceso #{idProceso} ha sido accedido" # Verifica el idProceso pero no su direccion
+			if bitReferencia == 1
+				# el valor del bit de referencia cambiara a 1
+			else # el valor de bit de referencia queda igual (0)	
+			end	
+			else puts "El proceso #{idProceso} esta mal definido o no existe"
+		end
+	end
 
 	def asignarMarcos(proceso, memReal, memSwap)
-		puts "dispMarcos #{memReal.dispMarcos}"
+		puts "Marcos Disponibles: #{memReal.dispMarcos}"
 		cantPideMarcos = proceso.cantPaginas-proceso.marcosRealAsig
-		puts "cantPideMarcos #{cantPideMarcos}"
+		puts "Marcos Utilizados: #{cantPideMarcos}"
 		if cantPideMarcos <= memReal.dispMarcos
-			puts "Alojar marcos para proceso #{proceso.id}"
+			puts "Marcos Actuales: "
 			marcoRealActual = 0
 			while proceso.marcosRealAsig < proceso.cantPaginas && marcoRealActual < memReal.arrMarcos.size do
 				puts marcoRealActual
@@ -84,6 +107,7 @@ class Manejador
 				end
 				marcoRealActual = marcoRealActual + 1
 			end
+			puts""
 		else
 			puts "F2C"
 			marcosNecesitados = cantPideMarcos
