@@ -8,8 +8,14 @@ def timestamp
 	Time.now.to_i
 end
 
+=begin 
+En seguida se declaran los objetos de memoria real y memoria swap, 
+el primer parámetro indica el tamaño en bytes y el segundo parámetro indica el tamaño de página en bytes. 
+=end
+
 memReal = Memoria.new(64, 8)
 memSwap = Memoria.new(80, 8)
+
 so = Manejador.new()
 
 archivo = File.open("datos.txt","r")
@@ -18,7 +24,7 @@ archivo.each do
 	|line|
 	arrComando = so.recibComando(line)
 
-	if arrComando[0] == 'p' || arrComando[0] == 'P'
+	if arrComando[0].upcase == 'P'
 		puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
 		so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
 		sleep(1)
@@ -38,7 +44,7 @@ archivo.each do
 	|line|
 	arrComando = so.recibComando(line)
 
-	if arrComando[0] == 'p' || arrComando[0] == 'P'
+	if arrComando[0].upcase == 'P'
 		puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
 		so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
 		sleep(1)
