@@ -35,12 +35,7 @@ while !bExit do
 			#No se nos olvide quitar ese sleep porque nos inflaría los benchmarks
 		when 'A'
 			puts "Instruccion A, falta programar accesos, se accesaron los primeros 4 marcos harcoded"
-			so.accederProceso(arrComando[1], arrComando[2], arrComando[3])
-			# Arreglo de marcos accesados
-			puts memReal.arrMarcos[0].fueAccesado = 1
-			puts memReal.arrMarcos[1].fueAccesado = 1
-			puts memReal.arrMarcos[2].fueAccesado = 1
-			puts memReal.arrMarcos[3].fueAccesado = 1
+			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
 				# Si el proceso existe acceder a el, si no indicar error
 			#if arrComando[2] == item.idProceso
 				#puts "El Proceso #{arrComando[2]} ha sido accedido"
@@ -70,10 +65,10 @@ while !bExit do
 			so.listaProcesos.each do
 				|item|
 				puts "Proceso #{item.id}"
+				puts "marcoReal marcoSwap"
 				item.tablaPaginas.each do
 					|item2|
-					puts item2.marcoReal
-					puts item2.marcoSwap
+					puts "#{item2.marcoReal} 		#{item2.marcoSwap}"
 				end
 			end
 		when 'E'

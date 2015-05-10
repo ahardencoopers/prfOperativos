@@ -53,38 +53,45 @@ class Manejador
 		end
 
 		if procesoExiste
-			puts "Proceso #{idProceso} pide #{Integer(cantBytes).fdiv(8).ceil} marcos mas."
+			puts "Proceso #{idProceso} pide #{Integer(cantBytes).fdiv(memReal.tamPagina).ceil} marcos mas."
 			procesoTemp = self.getProceso(idProceso)
 			procesoTemp.desplegarProceso
 			procesoTemp.cantBytes = procesoTemp.cantBytes + Integer(cantBytes)
-			procesoTemp.cantPaginas = procesoTemp.cantBytes.fdiv(8).ceil
+			procesoTemp.cantPaginas = procesoTemp.cantBytes.fdiv(memReal.tamPagina).ceil
 			procesoTemp.desplegarProceso
 			puts procesoTemp.marcosRealAsig
 			self.asignarMarcos(procesoTemp, memReal, memSwap)
 		else
-			procesoTemp = Proceso.new(idProceso, cantBytes, 8)
+			procesoTemp = Proceso.new(idProceso, cantBytes, memReal.tamPagina)
 			@listaProcesos.push(procesoTemp)
 			self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
 		end
 	end
 	
-	def accederProceso(direccion, idProceso, bitReferencia)
-		procesoExiste = false;
-		
+	def accederProceso(direccion, idProceso, bitReferencia, memReal, memSwap)
+		procesoExiste = false
+		numMarco = 0
 		@listaProcesos.each do
 			|proceso|
 			if proceso.id == idProceso
 				procesoExiste = true
+				proceso.tablaPaginas.each do
+					|item2|
+					if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoReal >= 0
+					puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
+					memReal.arrMarcos[numMarco].fueAccesado = 1
+					end
+					if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
+					puts "La instruccion se encuentra cargado en marco swap #{item2.marcoSwap}, no se ha accesado"
+					#Meter solicitud de swap
+					end
+					numMarco = numMarco + 1
+				end
 			end
 		end
 		
-		if procesoExiste
-			puts "El proceso #{idProceso} ha sido accedido" # Verifica el idProceso pero no su direccion
-			if bitReferencia == 1
-				# el valor del bit de referencia cambiara a 1
-			else # el valor de bit de referencia queda igual (0)	
-			end	
-			else puts "El proceso #{idProceso} esta mal definido o no existe"
+		if !procesoExiste
+			puts "El proceso #{idProceso} esta mal definido o no existe"
 		end
 	end
 
