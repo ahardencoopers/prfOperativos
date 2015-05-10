@@ -24,13 +24,17 @@ class Manejador
 				arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
 				return arrTemp
 			elsif arrComando[0].upcase == 'A'
-				puts "Instr A"
+				arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
+				return arrTemp
 			elsif arrComando[0].upcase == 'L'
-				puts "Instr L"
+				arrTemp.push(arrComando[0], arrComando[1])
+				return arrTemp
 			elsif arrComando[0].upcase == 'F'
-				puts "Instr F"
+				arrTemp.push(arrComando[0])
+				return arrTemp
 			elsif arrComando[0].upcase == 'E'
-				puts "Instr E"
+				arrTemp.push(arrComando[0])
+				return arrTemp
 			else
 				return arrTemp.push(nil, arrComando[0])
 			end
