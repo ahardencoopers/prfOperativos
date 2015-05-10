@@ -53,6 +53,7 @@ class Manejador
 		end
 
 		if procesoExiste
+=begin
 			puts "Proceso #{idProceso} pide #{Integer(cantBytes).fdiv(memReal.tamPagina).ceil} marcos mas."
 			procesoTemp = self.getProceso(idProceso)
 			procesoTemp.desplegarProceso
@@ -61,13 +62,15 @@ class Manejador
 			procesoTemp.desplegarProceso
 			puts procesoTemp.marcosRealAsig
 			self.asignarMarcos(procesoTemp, memReal, memSwap)
+=end
+			puts "Error al cargar proceso #{idProceso}. Ya esta cargado en memoria."
 		else
 			procesoTemp = Proceso.new(idProceso, cantBytes, memReal.tamPagina)
 			@listaProcesos.push(procesoTemp)
 			self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
 		end
 	end
-	
+
 	def accederProceso(direccion, idProceso, bitReferencia, memReal, memSwap)
 		procesoExiste = false
 		numMarco = 0
@@ -93,13 +96,14 @@ class Manejador
 				end
 			end
 		end
-		
+
 		if !procesoExiste
 			puts "El proceso #{idProceso} esta mal definido o no existe"
 		end
 	end
 
 	def asignarMarcos(proceso, memReal, memSwap)
+		puts "Asignando marcos para proceso #{proceso.id}"
 		puts "Marcos Disponibles: #{memReal.dispMarcos}"
 		cantPideMarcos = proceso.cantPaginas-proceso.marcosRealAsig
 		puts "Marcos Solicitados: #{cantPideMarcos}"
@@ -227,34 +231,39 @@ class Manejador
 
 	def liberarProceso(idProceso, memReal, memSwap)
 		procesoExiste = false
+		idProcesoActual = 0
 		@listaProcesos.each do
 			|proceso|
-			if proceso.id == idProceso
+			if  proceso != nil && proceso.id == idProceso
 				procesoExiste = true
 				proceso.tablaPaginas.each do
 					|item2|
+					#Liberar paginas del proceso de memoria real
 					if item2.marcoReal >= 0
-					puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
+					puts "La pagina en marco real #{item2.marcoReal} fue liberada"
 					memReal.arrMarcos[item2.marcoReal].fueAccesado = 0
 					memReal.arrMarcos[item2.marcoReal].idProceso = -1
 					memReal.dispMarcos = memReal.dispMarcos + 1
 					memReal.ocupMarcos = memReal.ocupMarcos - 1
 					end
+					#Liberar paginas del proceso de memoria swap
 					if item2.marcoSwap >= 0
-					puts "La instruccion se encuentra cargado en marco swap #{item2.marcoSwap}, no se ha accesado"
+					puts "La pagina en marco swap #{item2.marcoSwap} fue liberada"
 					memSwap.arrMarcos[item2.marcoReal].fueAccesado = 0
 					memSwap.arrMarcos[item2.marcoReal].idProceso = -1
 					memSwap.dispMarcos = memSwap.dispMarcos + 1
 					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
 					end
 				end
+				@listaProcesos[idProcesoActual] = nil
 			end
+			idProcesoActual = idProcesoActual + 1
 		end
 
 		if procesoExiste
 			puts "Se ha liberado toda la memoria ocupada por el proceso #{idProceso}"
 		end
-		
+
 		if !procesoExiste
 			puts "El proceso #{idProceso} esta mal definido o no existe"
 		end
