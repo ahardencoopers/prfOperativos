@@ -29,21 +29,17 @@ while !bExit do
 
 		case arrComando[0].upcase
 		when 'P'
-			puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
+			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]}"
 			so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
 			sleep(1)
 			#No se nos olvide quitar ese sleep porque nos inflaría los benchmarks
 		when 'A'
-			puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]} #{arrComando[2]}"
+			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[2]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
-			puts "#{arrComando[0]} #{arrComando[1]}"
 		when 'L'
+			puts "#{arrComando[0].upcase} #{arrComando[1]}"
 			puts "Se libero proceso #{arrComando[1]}"
 			so.liberarProceso(arrComando[1], memReal, memSwap)
-			so.listaProcesos.each do
-				|item|
-				puts item.class
-			end
 		when 'F'
 			puts 'F'
 			puts "memReal"
