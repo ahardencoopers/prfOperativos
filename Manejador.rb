@@ -53,6 +53,7 @@ class Manejador
 		end
 
 		if procesoExiste
+=begin
 			puts "Proceso #{idProceso} pide #{Integer(cantBytes).fdiv(memReal.tamPagina).ceil} marcos mas."
 			procesoTemp = self.getProceso(idProceso)
 			procesoTemp.desplegarProceso
@@ -61,6 +62,8 @@ class Manejador
 			procesoTemp.desplegarProceso
 			puts procesoTemp.marcosRealAsig
 			self.asignarMarcos(procesoTemp, memReal, memSwap)
+=end
+			puts "Error al cargar proceso #{idProceso}. Ya esta cargado en memoria."
 		else
 			procesoTemp = Proceso.new(idProceso, cantBytes, memReal.tamPagina)
 			@listaProcesos.push(procesoTemp)
