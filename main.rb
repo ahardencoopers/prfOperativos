@@ -8,9 +8,9 @@ def timestamp
 	Time.now.to_i
 end
 
-=begin 
-En seguida se declaran los objetos de memoria real y memoria swap, 
-el primer parámetro indica el tamaño en bytes y el segundo parámetro indica el tamaño de página en bytes. 
+=begin
+En seguida se declaran los objetos de memoria real y memoria swap,
+el primer parámetro indica el tamaño en bytes y el segundo parámetro indica el tamaño de página en bytes.
 =end
 
 memReal = Memoria.new(64, 8)
@@ -27,7 +27,7 @@ while !bExit do
 		|line|
 		arrComando = so.recibComando(line)
 
-		case arrComando[0].upcase 
+		case arrComando[0].upcase
 		when 'P'
 			puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
 			so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
@@ -36,14 +36,14 @@ while !bExit do
 		when 'A'
 			puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]} #{arrComando[2]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
-				# Si el proceso existe acceder a el, si no indicar error
-			#if arrComando[2] == item.idProceso
-				#puts "El Proceso #{arrComando[2]} ha sido accedido"
-			#elsif puts "El Proceso #{arrComando[2]} no existe"
-			#end
-		when 'L'
 			puts "#{arrComando[0]} #{arrComando[1]}"
+		when 'L'
+			puts "Se libero proceso #{arrComando[1]}"
 			so.liberarProceso(arrComando[1], memReal, memSwap)
+			so.listaProcesos.each do
+				|item|
+				puts item.class
+			end
 		when 'F'
 			puts 'F'
 			puts "memReal"
