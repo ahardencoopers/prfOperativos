@@ -34,7 +34,7 @@ while !bExit do
 			sleep(1)
 			#No se nos olvide quitar ese sleep porque nos inflaría los benchmarks
 		when 'A'
-			puts "Instruccion A, falta programar accesos, se accesaron los primeros 4 marcos harcoded"
+			puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]} #{arrComando[2]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
 				# Si el proceso existe acceder a el, si no indicar error
 			#if arrComando[2] == item.idProceso
@@ -42,7 +42,8 @@ while !bExit do
 			#elsif puts "El Proceso #{arrComando[2]} no existe"
 			#end
 		when 'L'
-			puts "Instruccion L, falta programar liberacion"
+			puts "#{arrComando[0]} #{arrComando[1]}"
+			so.liberarProceso(arrComando[1], memReal, memSwap)
 		when 'F'
 			puts 'F'
 			puts "memReal"

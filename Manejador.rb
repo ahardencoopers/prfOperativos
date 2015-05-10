@@ -83,7 +83,11 @@ class Manejador
 					end
 					if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
 					puts "La instruccion se encuentra cargado en marco swap #{item2.marcoSwap}, no se ha accesado"
-					#Meter solicitud de swap
+					puts "Proceso #{idProceso} genera page fault."
+					procesoTemp = self.getProceso(idProceso)
+					procesoTemp.desplegarProceso
+					puts procesoTemp.marcosRealAsig
+					self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
 					end
 					numMarco = numMarco + 1
 				end
@@ -98,7 +102,38 @@ class Manejador
 	def asignarMarcos(proceso, memReal, memSwap)
 		puts "Marcos Disponibles: #{memReal.dispMarcos}"
 		cantPideMarcos = proceso.cantPaginas-proceso.marcosRealAsig
-		puts "Marcos Utilizados: #{cantPideMarcos}"
+		puts "Marcos Solicitados: #{cantPideMarcos}"
+		if cantPideMarcos <= memReal.dispMarcos
+			puts "Marcos Actuales: "
+			marcoRealActual = 0
+			while proceso.marcosRealAsig < proceso.cantPaginas && marcoRealActual < memReal.arrMarcos.size do
+				puts marcoRealActual
+				if memReal.arrMarcos[marcoRealActual].idProceso == -1
+					paginaTemp = Pagina.new(marcoRealActual)
+					marcoTemp = Marco.new(proceso.id, 0, self.timestamp())
+					memReal.arrMarcos[marcoRealActual] = marcoTemp
+					proceso.tablaPaginas.push(paginaTemp)
+					memReal.dispMarcos = memReal.dispMarcos - 1
+					memReal.ocupMarcos = memReal.ocupMarcos + 1
+					proceso.marcosRealAsig = proceso.marcosRealAsig + 1
+					puts "Se alojo marco real #{marcoRealActual} para pagina #{proceso.marcosRealAsig-1}"
+				end
+				marcoRealActual = marcoRealActual + 1
+			end
+			puts""
+		else
+			puts "F2C"
+			marcosNecesitados = cantPideMarcos
+			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+				self.asignarMarcos(proceso, memReal, memSwap)
+			end
+		end
+	end
+
+	def asignarMarcoPag(proceso, memReal, memSwap, pagina)
+		puts "Marcos Disponibles: #{memReal.dispMarcos}"
+		cantPideMarcos = 1
+		puts "Marcos Solicitados: #{cantPideMarcos}"
 		if cantPideMarcos <= memReal.dispMarcos
 			puts "Marcos Actuales: "
 			marcoRealActual = 0
@@ -187,6 +222,41 @@ class Manejador
 				return @listaProcesos[i]
 			end
 			i = i+1
+		end
+	end
+
+	def liberarProceso(idProceso, memReal, memSwap)
+		procesoExiste = false
+		@listaProcesos.each do
+			|proceso|
+			if proceso.id == idProceso
+				procesoExiste = true
+				proceso.tablaPaginas.each do
+					|item2|
+					if item2.marcoReal >= 0
+					puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
+					memReal.arrMarcos[item2.marcoReal].fueAccesado = 0
+					memReal.arrMarcos[item2.marcoReal].idProceso = -1
+					memReal.dispMarcos = memReal.dispMarcos + 1
+					memReal.ocupMarcos = memReal.ocupMarcos - 1
+					end
+					if item2.marcoSwap >= 0
+					puts "La instruccion se encuentra cargado en marco swap #{item2.marcoSwap}, no se ha accesado"
+					memSwap.arrMarcos[item2.marcoReal].fueAccesado = 0
+					memSwap.arrMarcos[item2.marcoReal].idProceso = -1
+					memSwap.dispMarcos = memSwap.dispMarcos + 1
+					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
+					end
+				end
+			end
+		end
+
+		if procesoExiste
+			puts "Se ha liberado toda la memoria ocupada por el proceso #{idProceso}"
+		end
+		
+		if !procesoExiste
+			puts "El proceso #{idProceso} esta mal definido o no existe"
 		end
 	end
 
