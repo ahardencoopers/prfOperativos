@@ -85,7 +85,7 @@ class Manejador
 					memReal.arrMarcos[numMarco].fueAccesado = 1
 					end
 					if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
-					puts "La instruccion se encuentra cargado en marco swap #{item2.marcoSwap}, no se ha accesado"
+					puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, no se ha accesado"
 					puts "Proceso #{idProceso} genera page fault."
 					procesoTemp = self.getProceso(idProceso)
 					procesoTemp.desplegarProceso
@@ -231,10 +231,9 @@ class Manejador
 
 	def liberarProceso(idProceso, memReal, memSwap)
 		procesoExiste = false
-		idProcesoActual = 0
 		@listaProcesos.each do
 			|proceso|
-			if  proceso != nil && proceso.id == idProceso
+			if proceso.id == idProceso
 				procesoExiste = true
 				proceso.tablaPaginas.each do
 					|item2|
@@ -255,12 +254,22 @@ class Manejador
 					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
 					end
 				end
-				@listaProcesos[idProcesoActual] = nil
 			end
-			idProcesoActual = idProcesoActual + 1
 		end
 
 		if procesoExiste
+			counter = 0
+			@listaProcesos.each do
+			|proceso|
+				if proceso.id == idProceso
+					@listaProcesos.delete_at(counter)
+				end
+			counter = counter + 1
+			end
+			@listaProcesos.each do
+			|proceso|
+				puts proceso.id
+			end
 			puts "Se ha liberado toda la memoria ocupada por el proceso #{idProceso}"
 		end
 
