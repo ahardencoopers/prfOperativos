@@ -170,6 +170,10 @@ class Manejador
 		end
 	end
 
+	#El metodo mandarSwap solo sirve sacar marcos de memoria
+	# real a swap cuando se quiere cargar un proceso a memoria
+	#Se necesitan un nuevo metodo similar a ponerMarco que lo que hace es
+	#sacar un solo marco de swap y ponerlo en memoria real
 	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 		puts "Se necesita realizar swapping para proceso #{proceso.id}"
 		if memSwap.dispMarcos >= marcosNecesitados
@@ -245,7 +249,10 @@ class Manejador
 					#Liberar paginas del proceso de memoria real
 					if item2.marcoReal >= 0
 					puts "La pagina en marco real #{item2.marcoReal} fue liberada"
-					memReal.arrMarcos[item2.marcoReal].fueAccesado = 0
+					memReal.arrMarcos[item2.marcoReal].timestampCarga = -1
+					#Voy a poner que cuando se libere un marco fueAccesado sea -1 para que se parezca a un estado inicial
+					#Si no funciona volver a poner valor de 0 en la linea de abajo
+					memReal.arrMarcos[item2.marcoReal].fueAccesado = -1
 					memReal.arrMarcos[item2.marcoReal].idProceso = -1
 					memReal.dispMarcos = memReal.dispMarcos + 1
 					memReal.ocupMarcos = memReal.ocupMarcos - 1
@@ -265,15 +272,11 @@ class Manejador
 		if procesoExiste
 			counter = 0
 			@listaProcesos.each do
-			|proceso|
+				|proceso|
 				if proceso.id == idProceso
 					@listaProcesos.delete_at(counter)
 				end
-			counter = counter + 1
-			end
-			@listaProcesos.each do
-			|proceso|
-				puts proceso.id
+				counter = counter + 1
 			end
 			puts "Se ha liberado toda la memoria ocupada por el proceso #{idProceso}"
 		end
@@ -283,4 +286,41 @@ class Manejador
 		end
 	end
 
+	def mostrarSistema(memReal, memSwap)
+		puts "Memoria Real"
+		memReal.arrMarcos.each do
+			|item|
+			puts " #{item.idProceso}  #{item.timestampCarga}   #{item.fueAccesado}"
+		end
+
+		puts ""
+
+		puts "Memoria Swap"
+		memSwap.arrMarcos.each do
+			|item|
+			puts item.idProceso
+		end
+
+		puts ""
+
+		puts "Lista de Procesos"
+		@listaProcesos.each do
+			|item|
+			puts "Proceso #{item.id}"
+			puts "marcoReal marcoSwap"
+			item.tablaPaginas.each do
+				|item2|
+				puts "#{item2.marcoReal} 		#{item2.marcoSwap}"
+			end
+		end
+	end
+
+	def reiniciarSistema(memReal, memSwap)
+		puts "Reiniciando sistema"
+		@listaProcesos.each do
+			|proceso|
+			idProcesoTemp = proceso.id
+			self.liberarProceso(idProcesoTemp, memReal, memSwap)
+		end
+	end
 end

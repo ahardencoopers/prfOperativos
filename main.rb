@@ -44,30 +44,8 @@ while !bExit do
 			puts 'F'
 			puts "memReal"
 			puts "ID  TimesTamp  Accesado"
-			memReal.arrMarcos.each do
-				|item|
-				puts " #{item.idProceso}  #{item.timestampCarga}   #{item.fueAccesado}"
-			end
-
-			puts ""
-
-			puts "memSwap"
-			memSwap.arrMarcos.each do
-				|item|
-				puts item.idProceso
-			end
-
-			puts ""
-
-			so.listaProcesos.each do
-				|item|
-				puts "Proceso #{item.id}"
-				puts "marcoReal marcoSwap"
-				item.tablaPaginas.each do
-					|item2|
-					puts "#{item2.marcoReal} 		#{item2.marcoSwap}"
-				end
-			end
+			so.reiniciarSistema(memReal, memSwap)
+			so.mostrarSistema(memReal, memSwap)
 		when 'E'
 			puts 'E'
 			bExit=true
