@@ -248,7 +248,7 @@ class Manejador
 					|item2|
 					#Liberar paginas del proceso de memoria real
 					if item2.marcoReal >= 0
-					puts "La pagina en marco real #{item2.marcoReal} fue liberada"
+					puts "La pagina en marco real #{item2.marcoReal} de proceso #{idProceso} fue liberada"
 					memReal.arrMarcos[item2.marcoReal].timestampCarga = -1
 					#Voy a poner que cuando se libere un marco fueAccesado sea -1 para que se parezca a un estado inicial
 					#Si no funciona volver a poner valor de 0 en la linea de abajo
