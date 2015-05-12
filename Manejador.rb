@@ -78,21 +78,26 @@ class Manejador
 			|proceso|
 			if proceso.id == idProceso
 				procesoExiste = true
-				proceso.tablaPaginas.each do
-					|item2|
-					if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoReal >= 0
-					puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
-					memReal.arrMarcos[numMarco].fueAccesado = 1
+				if proceso.cantBytes >= Integer(direccion)
+					proceso.tablaPaginas.each do
+						|item2|
+						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoReal >= 0
+						puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
+						memReal.arrMarcos[numMarco].fueAccesado = 1
+						end
+						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
+						puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, no se ha accesado"
+						puts "Proceso #{idProceso} genera page fault."
+						proceso.faultsCausados = proceso.faultsCausados + 1
+						procesoTemp = self.getProceso(idProceso)
+						procesoTemp.desplegarProceso
+						puts procesoTemp.marcosRealAsig
+						self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
+						end
+						numMarco = numMarco + 1
 					end
-					if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
-					puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, no se ha accesado"
-					puts "Proceso #{idProceso} genera page fault."
-					procesoTemp = self.getProceso(idProceso)
-					procesoTemp.desplegarProceso
-					puts procesoTemp.marcosRealAsig
-					self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
-					end
-					numMarco = numMarco + 1
+				else
+				puts "La direccion referenciada no es valida para el proceso #{idProceso}"
 				end
 			end
 		end
@@ -160,7 +165,7 @@ class Manejador
 			puts "F2C"
 			marcosNecesitados = cantPideMarcos
 			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-				self.asignarMarcos(proceso, memReal, memSwap)
+				self.asignarMarcoPag(proceso, memReal, memSwap, pagina)
 			end
 		end
 	end

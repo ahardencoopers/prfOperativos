@@ -34,7 +34,7 @@ while !bExit do
 			sleep(1)
 			#No se nos olvide quitar ese sleep porque nos inflaría los benchmarks
 		when 'A'
-			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[2]}"
+			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[3]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
 		when 'L'
 			puts "#{arrComando[0].upcase} #{arrComando[1]}"
