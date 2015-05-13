@@ -1,0 +1,62 @@
+Proyecto Final de Sistemas Operativos
+ITESM Enero-Mayo 2015
+Profesor Jorge Luiz Garza
+
+Descripcion:
+Manejador de memoria virtual con paginacion y politica de reemplazo FIFO 2nd chance.
+Los procesos pueden hacer solicitudes a memoria a traves de un archivo de texto llamado "datos.txt".
+Las solicitudes que pueden realizar los procesos son: pedir memoria y acceder una direccion virtual y liberar las paginas que tienen
+alojadas. El archivo "datos.txt" debe estar en la misma carpeta que el archivo "main.rb" al momento de correr el programa.
+Se utilizan paginas de 8 bytes. Cuando un proceso es cargado en memoria no se cuentan page faults, sin
+embargo la siguiente vez que se cargue una pagina en memoria de un proceso por cualquier otra razon se cuenta como page fault.
+
+Formato y detalles de solicitudes
+
+Pedir ser cargado en memoria*
+Formato: P cantBytes idProceso Donde P indica la instruccion, cantBytes es el tamanio en bytes del proceso
+y idProceso es el identificador unico del proceso.
+
+Accion: El programa debe de alojar la cantidad correcta de marcos de memoria real para el tamanio del proceso.
+En caso de estar llena la memoria primero debe de alojar marcos utilizando la politica de reemplazo y mandar las paginas
+a marcos de memoria swap, y cuando haya espacio colocar el proceso en memoria.
+
+Output: La instruccion y sus valores (P cantBytes idProceso), lista de marcos asignados, si fue necesario hacer swapping,
+marcos que fueron swappeados (que paginas eran, de que proceso y donde quedaron en swap).
+
+*Un proceso no puede solicitar memoria 2 veces sin antes liberar la que ya tiene.
+
+Accessar (y posiblemente) Modificar una pagina
+Formato: A dirVirtual idProceso escribir Donde A indica la instruccion, dirVirtual es una direccion virtual y
+escribir es un valor booleano que indica si se va a escribir o no en la pagina que se va a accesar.
+
+Accion: EL programa debe de modificar los datos necesarios para indicar que se hizo una lectura y/o escritura de la pagina.
+
+Output: La instruccion y sus valores, direccion de memoria real donde se encontraba la direccion virtual,
+si estaba en swap indicar en donde y donde se puso en memoria real, si se tuvo que swappear otra pagina para meter
+la que se queria accesar hacer el mismo output con respecto a swapping de Pedir ser cargado en memoria
+
+Liberar paginas de un Proceso
+Formato: L idProceso Donde L es la instruccion.
+
+Accion: El programa debe de librerar de memoria real y swap todas las paginas del proceso correspondiente.
+
+Output: La instruccion y su valor y una lista de los marcos liberados.
+
+Fin de tanda de solicitudes
+Formato: F Donde F es la instruccion.
+
+Accion: El programa debe de reinicializar todo al estado inicial (como si se acabara de correr) y mostrar unas estadisitcas sobre
+el uso de memoria. En caso que queden programas cargados en memoria indicar error.
+
+Output: La instruccion, Turnaround Time de cada proceso (que termino), Turnaround Time promedio (de los que terminaron), page faults
+por proceso (cuando un programa es cargado por 1era vez no causa page faults).
+
+Fin del Programa
+Formato: E Donde E es la instruccion. Esta sera la ultima linea en el archivo que contiene las solicitudes.
+
+Accion: Debe de cerrar el programa.
+
+Output: La instruccion y un mensaje de despedida.
+
+Autores:
+Alberto Harden Cooper Saldivar a00811931
