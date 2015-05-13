@@ -1,3 +1,12 @@
+# Clase main a ejecutar
+
+=begin 
+	Equipo 4.3
+	Alberto Harden Cooper a00811931
+	José Elí Santiago Rodríguez a07025007
+	Osmar Alan Hernandez Sanchez a01244070
+=end
+
 require './Memoria'
 require './Marco'
 require './Pagina'
@@ -8,90 +17,54 @@ def timestamp
 	Time.now.to_i
 end
 
-=begin 
-En seguida se declaran los objetos de memoria real y memoria swap, 
-el primer parámetro indica el tamaño en bytes y el segundo parámetro indica el tamaño de página en bytes. 
-=end
-
+# Se crean la Memoria Real y Memoria Swapp
+# Memoria Real: Memoria en la que se encontraran los procesos
+# Memoria Swapp: Memoria de reserva para los procesos
 memReal = Memoria.new(64, 8)
 memSwap = Memoria.new(80, 8)
+bExit = false
 
 so = Manejador.new()
 
+# Documneto con los procesos
+# Desde aqui se podran hacer las solicitude de memoria
 archivo = File.open("datos.txt","r")
 
-archivo.each do
-	|line|
-	arrComando = so.recibComando(line)
 
-	if arrComando[0].upcase == 'P'
-		puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
-		puts "Comando: #{arrComando[0]}, Cantidad: #{arrComando[1]}, ID: #{arrComando[2]}"
-		so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
-		sleep(1)
-	elsif arrComando[0] == 'a' || arrComando[0] == 'A'
-		so.accederProceso(arrComando[1], arrComando[2], arrComando[3])
-	elsif arrComando[0] == nil
-		puts "Instruccion invalida #{arrComando[1]}"
+while !bExit do
+	# Acciones de los comanos ingresadoes en el Documento datos.txt
+	archivo.each do
+		|line|
+		arrComando = so.recibComando(line)
+
+		# La funcionalidad de cada comando se encuentra en la clase Manejador
+		case arrComando[0].upcase
+		when 'P'
+			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]}"
+			so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
+			sleep(1)
+			#No se nos olvide quitar ese sleep porque nos inflaría los benchmarks
+		when 'A'
+			puts ""
+			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[3]}"
+			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
+			puts ""
+		when 'L'
+			puts ""
+			puts "#{arrComando[0].upcase} #{arrComando[1]}"
+			puts "Liberando proceso #{arrComando[1]}"
+			so.liberarProceso(arrComando[1], memReal, memSwap)
+			puts ""
+		when 'F'
+			puts 'F'
+			puts ""
+			so.reiniciarSistema(memReal, memSwap)
+			so.mostrarSistema(memReal, memSwap)
+		when 'E'
+			puts 'E'
+			bExit=true
+		else
+			puts "Instruccion invalida #{arrComando[1]}"
+		end
 	end
 end
-
-puts ""
-
-# Arreglo de marcos accesados
-puts memReal.arrMarcos[0].fueAccesado = 1
-puts memReal.arrMarcos[1].fueAccesado = 1
-puts memReal.arrMarcos[2].fueAccesado = 1
-puts memReal.arrMarcos[3].fueAccesado = 1
-
-puts ""
-
-archivo = File.open("datos2.txt", "r")
-
-archivo.each do
-	|line|
-	arrComando = so.recibComando(line)
-
-	if arrComando[0].upcase == 'P'
-		puts "#{arrComando[0]} #{arrComando[1]} #{arrComando[2]}"
-		so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
-		sleep(1)
-	elsif arrComando[0] == nil
-		puts "Instruccion invalida #{arrComando[1]}"
-	end
-end
-
-puts "memReal"
-puts "ID  TimesTamp  Accesado"
-memReal.arrMarcos.each do
-	|item|
-	puts " #{item.idProceso}  #{item.timestampCarga}   #{item.fueAccesado}"
-end
-
-puts ""
-
-puts "memSwap"
-memSwap.arrMarcos.each do
-	|item|
-	puts item.idProceso
-end
-
-puts ""
-=begin
-so.listaProcesos.each do
-	|item|
-	puts "Proceso #{item.id}"
-	item.tablaPaginas.each do
-		|item2|
-		puts item2.marcoReal
-		puts item2.marcoSwap
-	end
-end
-=end
-
-
-# Si el proceso existe acceder a el, si no indicar error
-		#if arrComando[2] == item.idProceso
-			#puts "El Proceso #{arrComando[2]} ha sido accedido"
-		#elsif puts "El Proceso #{arrComando[2]} no existe"
-		#end

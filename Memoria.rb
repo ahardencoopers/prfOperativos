@@ -1,3 +1,12 @@
+=begin 
+	Equipo 4.3
+	Alberto Harden Cooper a00811931
+	José Elí Santiago Rodríguez a07025007
+	Osmar Alan Hernandez Sanchez a01244070
+=end
+
+# Memoria de 2048 bytes con 256 Marcos
+
 require './Marco'
 
 class Memoria
