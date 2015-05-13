@@ -204,6 +204,7 @@ class Manejador
 		else
 			#En caso de no haber suficiente memorial real para el proceso se aplica
 			#politica de reemplzao FIFO 2nd chance.
+			puts ""
 			puts "F2C"
 			#Se crea una variable con la cantidad de marcos necesitados por el proceso.
 			marcosNecesitados = cantPideMarcos
@@ -310,6 +311,8 @@ class Manejador
 					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
 					puts "Quedo en marco de swap #{marcoSwap}"
 					return true
+		#		else
+		#			puts "No se puede mandar a swap marco #{memReal.arrMarcos[iViejo].idProceso}"
 				end
 			end
 		else
@@ -375,9 +378,10 @@ class Manejador
 					#Liberar paginas del proceso de memoria swap
 					#Se hace el mismo proceso pero en memoria swap.
 					if item2.marcoSwap >= 0
-					puts "La pagina en marco swap #{item2.marcoSwap} fue liberada"
-					memSwap.arrMarcos[item2.marcoReal].fueAccesado = 0
-					memSwap.arrMarcos[item2.marcoReal].idProceso = -1
+					puts "La pagina en marco swap #{item2.marcoSwap} de proceso #{idProceso} fue liberada"
+					memSwap.arrMarcos[item2.marcoSwap].timestampCarga = -1
+					memSwap.arrMarcos[item2.marcoSwap].fueAccesado = -1
+					memSwap.arrMarcos[item2.marcoSwap].idProceso = -1
 					memSwap.dispMarcos = memSwap.dispMarcos + 1
 					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
 					end
@@ -399,10 +403,12 @@ class Manejador
 				counter = counter + 1
 			end
 			puts "Se ha liberado toda la memoria ocupada por el proceso #{idProceso}"
+			puts ""
 		end
 
 		if !procesoExiste
 			puts "El proceso #{idProceso} esta mal definido o no existe"
+			puts ""
 		end
 	end
 
@@ -445,10 +451,17 @@ class Manejador
 		puts "Reiniciando sistema"
 		#Ya que el metodo liberar procesos libera marcos de memoria y real y swap y despues borra el proceso, basta con llamar liberar
 		#memoria para cada proceso.
-		@listaProcesos.each do
-			|proceso|
-			idProcesoTemp = proceso.id
-			self.liberarProceso(idProcesoTemp, memReal, memSwap)
+
+		cantVeces = @listaProcesos.size + 1
+		cantVeces.times do
+			|i|
+			@listaProcesos.each do
+				|proceso|
+				idTemp = Integer(proceso.id)
+				if i == idTemp
+					liberarProceso(proceso.id, memReal, memSwap)
+				end
+			end
 		end
 	end
 end
