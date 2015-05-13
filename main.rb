@@ -1,6 +1,6 @@
-# Clase main a ejecutar
+#Clase main a ejecutar.
 
-=begin 
+=begin
 	Equipo 4.3
 	Alberto Harden Cooper a00811931
 	José Elí Santiago Rodríguez a07025007
@@ -13,12 +13,11 @@ require './Pagina'
 require './Proceso'
 require './Manejador'
 
-def timestamp
-	Time.now.to_i
-end
-
-def is_numeric?(obj) 
-   obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+#Metodo para determinar si un objeto es un numero.
+def is_numeric?(obj)
+	#Expresion regular que hace match con numeros enteros
+	#Se utiliza un if ternario para regresar el resultado
+	obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
 end
 
 =begin
@@ -30,49 +29,62 @@ memReal = Memoria.new(2048, 8)
 memSwap = Memoria.new(4096, 8)
 bExit = false
 
+#Se crea una nueva instancia de la clase Manejador.rb que actua como el manejador de memoria.
+#Tambien se le puede ver como el sistema operativo.
 so = Manejador.new()
 
-# Documneto con los procesos
-# Desde aqui se podran hacer las solicitude de memoria
+#Abrir el archivo de texto con solicitudes de memoria de los procesos.
 archivo = File.open("datos.txt","r")
 
 while !bExit do
-	# Acciones de los comanos ingresadoes en el Documento datos.txt
+	#Se recorre cada linea del archivo de texto datos.txt.
 	archivo.each do
+		#Se pone la linea en un "chute".
 		|line|
+		#Se manda la linea al manejador y se almacena el comando resultante en
+		#en un arreglo.
 		arrComando = so.recibComando(line)
 
-		# La funcionalidad de cada comando se encuentra en la clase Manejador
+		#La funcionalidad de cada comando se encuentra en la clase Manejador.
+		#Si los parametros del comando no son numeros enteros se indica un error, de lo contrario
+		#se sigue procesando el comando.
 		if ((is_numeric? arrComando[1]) || arrComando[1]==nil) && ((is_numeric? arrComando[2]) || arrComando[2]==nil) && ((is_numeric? arrComando[3]) || arrComando[3]==nil)
 		case arrComando[0].upcase
 		when 'P'
+			#Se llama metodo de manejador para instruccion P
 			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]}"
 			so.cargarProceso(arrComando[1], arrComando[2], memReal, memSwap)
 			sleep(1)
 			#No se nos olvide quitar ese sleep porque nos inflaría los benchmarks
 		when 'A'
+			#Se llama metodo de manejador para instruccion A.
 			puts ""
 			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[3]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
 			puts ""
 		when 'L'
+			#Se llama metodo de manejador para instruccion L.
 			puts ""
 			puts "#{arrComando[0].upcase} #{arrComando[1]}"
 			puts "Liberando proceso #{arrComando[1]}"
 			so.liberarProceso(arrComando[1], memReal, memSwap)
 			puts ""
 		when 'F'
+			#Se llama metodo de manejador para instruccion F.
 			puts 'F'
 			puts ""
 			so.reiniciarSistema(memReal, memSwap)
 			so.mostrarSistema(memReal, memSwap)
 		when 'E'
+			#Se llama metodo de manejador para instruccion E.
 			puts 'E'
 			bExit=true
 		else
+			#Si el comando no existe se indica un error.
 			puts "Instruccion invalida #{arrComando[1]}"
 		end
 		else
+			#Si el comando no tiene el formato correcto se indica un error.
 			puts "Los argumentos de las instrucciones deben ser números enteros"
 		end
 	end
