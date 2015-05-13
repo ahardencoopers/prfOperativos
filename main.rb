@@ -17,6 +17,10 @@ def timestamp
 	Time.now.to_i
 end
 
+def is_numeric?(obj) 
+   obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+end
+
 =begin
 En seguida se declaran los objetos de memoria real y memoria swap,
 el primer parámetro indica el tamaño en bytes y el segundo parámetro indica el tamaño de página en bytes.
@@ -39,6 +43,7 @@ while !bExit do
 		arrComando = so.recibComando(line)
 
 		# La funcionalidad de cada comando se encuentra en la clase Manejador
+		if ((is_numeric? arrComando[1]) || arrComando[1]==nil) && ((is_numeric? arrComando[2]) || arrComando[2]==nil) && ((is_numeric? arrComando[3]) || arrComando[3]==nil)
 		case arrComando[0].upcase
 		when 'P'
 			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]}"
@@ -66,6 +71,9 @@ while !bExit do
 			bExit=true
 		else
 			puts "Instruccion invalida #{arrComando[1]}"
+		end
+		else
+			puts "Los argumentos de las instrucciones deben ser números enteros"
 		end
 	end
 end
