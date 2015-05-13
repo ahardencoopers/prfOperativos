@@ -18,28 +18,28 @@ class Manejador
 	end
 
 	def recibComando(comando)
-			arrComando = comando.split()
-			arrTemp = Array.new()
-			if arrComando[0].upcase == 'P'  # Existe
-				arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
-				return arrTemp
-			elsif arrComando[0].upcase == 'A' # Existe
-				# MODIFICADO
-				arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
-				return arrTemp
-				#puts "Instr A"
-			elsif arrComando[0].upcase == 'L' # Liberar - No Existe
-				arrTemp.push(arrComando[0], arrComando[1])
-				return arrTemp
-			elsif arrComando[0].upcase == 'F' # Fin - No Existe
-				arrTemp.push(arrComando[0])
-				return arrTemp
-			elsif arrComando[0].upcase == 'E' # Exit - No Existe
-				arrTemp.push(arrComando[0])
-				return arrTemp
-			else
-				return arrTemp.push(nil, arrComando[0])
-			end
+		arrComando = comando.split()
+		arrTemp = Array.new()
+		if arrComando[0].upcase == 'P'  # Existe
+			arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
+			return arrTemp
+		elsif arrComando[0].upcase == 'A' # Existe
+			# MODIFICADO
+			arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
+			return arrTemp
+			#puts "Instr A"
+		elsif arrComando[0].upcase == 'L' # Liberar - No Existe
+			arrTemp.push(arrComando[0], arrComando[1])
+			return arrTemp
+		elsif arrComando[0].upcase == 'F' # Fin - No Existe
+			arrTemp.push(arrComando[0])
+			return arrTemp
+		elsif arrComando[0].upcase == 'E' # Exit - No Existe
+			arrTemp.push(arrComando[0])
+			return arrTemp
+		else
+			return arrTemp.push(nil, arrComando[0])
+		end
 	end
 
 	def cargarProceso(cantBytes, idProceso, memReal, memSwap)
@@ -160,7 +160,7 @@ class Manejador
 					memReal.dispMarcos = memReal.dispMarcos - 1
 					memReal.ocupMarcos = memReal.ocupMarcos + 1
 					proceso.marcosRealAsig = proceso.marcosRealAsig + 1
-					puts "Se alojo marco real #{marcoRealActual} para pagina #{proceso.marcosRealAsig-1}"
+					puts "Se alojo marco real #{marcoRealActual} para pagina #{Integer(pagina)}"
 				end
 				marcoRealActual = marcoRealActual + 1
 			end
