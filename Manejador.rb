@@ -65,9 +65,13 @@ class Manejador
 =end
 			puts "Error al cargar proceso #{idProceso}. Ya esta cargado en memoria."
 		else
-			procesoTemp = Proceso.new(idProceso, cantBytes, memReal.tamPagina)
-			@listaProcesos.push(procesoTemp)
-			self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
+			if Integer(cantBytes) <= memReal.cantBytes
+				procesoTemp = Proceso.new(idProceso, cantBytes, memReal.tamPagina)
+				@listaProcesos.push(procesoTemp)
+				self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
+			else 
+				puts "El proceso no puede ser cargado, excede el tamaño de memoria real"
+			end
 		end
 	end
 
