@@ -344,4 +344,8 @@ class Manejador
 			self.liberarProceso(idProcesoTemp, memReal, memSwap)
 		end
 	end
+<<<<<<< Updated upstream
 end
+=======
+end
+>>>>>>> Stashed changes

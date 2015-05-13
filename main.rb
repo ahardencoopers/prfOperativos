@@ -67,4 +67,8 @@ while !bExit do
 			puts "Instruccion invalida #{arrComando[1]}"
 		end
 	end
+<<<<<<< Updated upstream
 end
+=======
+end
+>>>>>>> Stashed changes
