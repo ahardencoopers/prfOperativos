@@ -1,3 +1,12 @@
+# Clase main a ejecutar
+
+=begin 
+	Equipo 4.3
+	Alberto Harden Cooper a00811931
+	José Elí Santiago Rodríguez a07025007
+	Osmar Alan Hernandez Sanchez a01244070
+=end
+
 require './Memoria'
 require './Marco'
 require './Pagina'
@@ -19,14 +28,17 @@ bExit = false
 
 so = Manejador.new()
 
+# Documneto con los procesos
+# Desde aqui se podran hacer las solicitude de memoria
 archivo = File.open("datos.txt","r")
 
 while !bExit do
-
+	# Acciones de los comanos ingresadoes en el Documento datos.txt
 	archivo.each do
 		|line|
 		arrComando = so.recibComando(line)
 
+		# La funcionalidad de cada comando se encuentra en la clase Manejador
 		case arrComando[0].upcase
 		when 'P'
 			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]}"

@@ -1,3 +1,12 @@
+# Clase Manejador: Es el constructor del proyecto
+
+=begin 
+	Equipo 4.3
+	Alberto Harden Cooper a00811931
+	José Elí Santiago Rodríguez a07025007
+	Osmar Alan Hernandez Sanchez a01244070
+=end
+
 require './Proceso'
 require './Marco'
 require './Pagina'
@@ -8,7 +17,7 @@ class Manejador
 		@procesosBloqueados = Array.new()
 	end
 
-	#Metodos get
+	# Metodos get
 	def listaProcesos
 		@listaProcesos
 	end
@@ -17,6 +26,9 @@ class Manejador
 		Time.now.to_i
 	end
 
+	# Instrucciones a ejecutar dependiendo del comando ingresado en datos.txt
+	# Comando P: Cargar un Proceso	;	Comando A: Accesar a un Proceso	;
+	# Comando L: Libera las Paginas del Proceso	;	Comando F: Fin	;	Comando E: Exit	;
 	def recibComando(comando)
 			arrComando = comando.split()
 			arrTemp = Array.new()
@@ -24,10 +36,8 @@ class Manejador
 				arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
 				return arrTemp
 			elsif arrComando[0].upcase == 'A' # Existe
-				# MODIFICADO
 				arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
 				return arrTemp
-				#puts "Instr A"
 			elsif arrComando[0].upcase == 'L' # Liberar - No Existe
 				arrTemp.push(arrComando[0], arrComando[1])
 				return arrTemp
@@ -42,6 +52,8 @@ class Manejador
 			end
 	end
 
+	# Metodo para Cargar un Proceso con los parametros necesarios
+	# Verifica la existencia del Proceso para poder crearlo
 	def cargarProceso(cantBytes, idProceso, memReal, memSwap)
 		procesoExiste = false;
 
@@ -53,16 +65,6 @@ class Manejador
 		end
 
 		if procesoExiste
-=begin
-			puts "Proceso #{idProceso} pide #{Integer(cantBytes).fdiv(memReal.tamPagina).ceil} marcos mas."
-			procesoTemp = self.getProceso(idProceso)
-			procesoTemp.desplegarProceso
-			procesoTemp.cantBytes = procesoTemp.cantBytes + Integer(cantBytes)
-			procesoTemp.cantPaginas = procesoTemp.cantBytes.fdiv(memReal.tamPagina).ceil
-			procesoTemp.desplegarProceso
-			puts procesoTemp.marcosRealAsig
-			self.asignarMarcos(procesoTemp, memReal, memSwap)
-=end
 			puts "Error al cargar proceso #{idProceso}. Ya esta cargado en memoria."
 		else
 			if Integer(cantBytes) <= memReal.cantBytes
@@ -111,6 +113,45 @@ class Manejador
 		end
 	end
 
+	# Metodo para Acceder a un Proceso con los parametros necesarios
+	# Se cambia del bit de referencia del Proceso cada vez que se accede a el
+	def accederProceso(direccion, idProceso, bitReferencia, memReal, memSwap)
+		procesoExiste = false
+		numMarco = 0
+		@listaProcesos.each do
+			|proceso|
+			if proceso.id == idProceso
+				procesoExiste = true
+				if proceso.cantBytes >= Integer(direccion)
+					proceso.tablaPaginas.each do
+						|item2|
+						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoReal >= 0
+						puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
+						memReal.arrMarcos[numMarco].fueAccesado = 1
+						end
+						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
+						puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, no se ha accesado"
+						puts "Proceso #{idProceso} genera page fault."
+						proceso.faultsCausados = proceso.faultsCausados + 1
+						procesoTemp = self.getProceso(idProceso)
+						procesoTemp.desplegarProceso
+						puts procesoTemp.marcosRealAsig
+						self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
+						end
+						numMarco = numMarco + 1
+					end
+				else
+				puts "La direccion referenciada no es valida para el proceso #{idProceso}"
+				end
+			end
+		end
+
+		if !procesoExiste
+			puts "El proceso #{idProceso} esta mal definido o no existe"
+		end
+	end
+
+	# Metodo para asignar un Marco a un Proceso
 	def asignarMarcos(proceso, memReal, memSwap)
 		puts "Asignando marcos para proceso #{proceso.id}"
 		puts "Marcos Disponibles: #{memReal.dispMarcos}"
@@ -139,6 +180,38 @@ class Manejador
 			marcosNecesitados = cantPideMarcos
 			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 				self.asignarMarcos(proceso, memReal, memSwap)
+			end
+		end
+	end
+	
+	# "Falta Comentar"
+	def asignarMarcoPag(proceso, memReal, memSwap, pagina)
+		puts "Marcos Disponibles: #{memReal.dispMarcos}"
+		cantPideMarcos = 1
+		puts "Marcos Solicitados: #{cantPideMarcos}"
+		if cantPideMarcos <= memReal.dispMarcos
+			puts "Marcos Actuales: "
+			marcoRealActual = 0
+			while proceso.marcosRealAsig < proceso.cantPaginas && marcoRealActual < memReal.arrMarcos.size do
+				puts marcoRealActual
+				if memReal.arrMarcos[marcoRealActual].idProceso == -1
+					paginaTemp = Pagina.new(marcoRealActual)
+					marcoTemp = Marco.new(proceso.id, 0, self.timestamp())
+					memReal.arrMarcos[marcoRealActual] = marcoTemp
+					proceso.tablaPaginas.push(paginaTemp)
+					memReal.dispMarcos = memReal.dispMarcos - 1
+					memReal.ocupMarcos = memReal.ocupMarcos + 1
+					proceso.marcosRealAsig = proceso.marcosRealAsig + 1
+					puts "Se alojo marco real #{marcoRealActual} para pagina #{proceso.marcosRealAsig-1}"
+				end
+				marcoRealActual = marcoRealActual + 1
+			end
+			puts""
+		else
+			puts "F2C"
+			marcosNecesitados = cantPideMarcos
+			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+				self.asignarMarcoPag(proceso, memReal, memSwap, pagina)
 			end
 		end
 	end
@@ -175,7 +248,7 @@ class Manejador
 	end
 
 	#El metodo mandarSwap solo sirve sacar marcos de memoria
-	# real a swap cuando se quiere cargar un proceso a memoria
+	#real a swap cuando se quiere cargar un proceso a memoria
 	#Se necesitan un nuevo metodo similar a ponerMarco que lo que hace es
 	#sacar un solo marco de swap y ponerlo en memoria real
 	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
@@ -221,6 +294,7 @@ class Manejador
 		end
 	end
 
+	# "FALTA COMENTAR"
 	def ponerMarco(marco, memoria)
 		i=0
 		memoria.arrMarcos.size.times do
@@ -232,6 +306,7 @@ class Manejador
 		end
 	end
 
+	# "FALTA COMENTAR"
 	def getProceso(id)
 		i = 0
 		@listaProcesos.size.times do
@@ -242,6 +317,7 @@ class Manejador
 		end
 	end
 
+	# "FALTA COMENTAR"
 	def liberarProceso(idProceso, memReal, memSwap)
 		procesoExiste = false
 		@listaProcesos.each do
@@ -290,6 +366,7 @@ class Manejador
 		end
 	end
 
+	# Muestra el estado actual del Sistema tanto la Memoria Real y la Memoria Swap
 	def mostrarSistema(memReal, memSwap)
 		puts "Memoria Real"
 		memReal.arrMarcos.each do
@@ -319,6 +396,7 @@ class Manejador
 		end
 	end
 
+	# "FALTA COMENTAR"
 	def reiniciarSistema(memReal, memSwap)
 		puts "Reiniciando sistema"
 		@listaProcesos.each do
