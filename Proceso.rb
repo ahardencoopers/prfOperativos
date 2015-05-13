@@ -1,3 +1,10 @@
+=begin 
+	Equipo 4.3
+	Alberto Harden Cooper a00811931
+	José Elí Santiago Rodríguez a07025007
+	Osmar Alan Hernandez Sanchez a01244070
+=end
+
 class Proceso
 	def initialize(id, cantBytes, tamMarcos)
 		@id = id
@@ -7,11 +14,7 @@ class Proceso
 			@cantBytes = 1
 		end
 
-		@cantPaginas = @cantBytes/Integer(tamMarcos)
-
-		if @cantPaginas < 0
-			@cantPaginas = 1
-		end
+		@cantPaginas = @cantBytes.fdiv(Integer(tamMarcos)).ceil
 
 		@tablaPaginas = Array.new()
 
