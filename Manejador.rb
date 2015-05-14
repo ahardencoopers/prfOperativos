@@ -97,7 +97,7 @@ class Manejador
 				#Se llama el metodo de manejador que asigna marcos para el proceso recien agregado a la lista.
 				self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
 			else
-				#Si el tamaño del proceso excede la memoria real se indica un error.
+				#Si el tamanio del proceso excede la memoria real se indica un error.
 				puts "El proceso no puede ser cargado, excede el tamaño de memoria real"
 			end
 		end
@@ -125,21 +125,27 @@ class Manejador
 					proceso.tablaPaginas.each do
 						#Se pone la pagina en un "chute".
 						|item2|
+						indiceTablaPagina = Integer(direccion).fdiv(memReal.tamPagina).floor
 						#Se calcula el marco de memoria real para la pagina y se checa si coinciden.
 						#Si coinciden se cambia el bit de referencia.
-						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoReal >= 0
-						puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
-						memReal.arrMarcos[numMarco].fueAccesado = 1
+						if numMarco == indiceTablaPagina && item2.marcoReal >= 0
+							puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
+							memReal.arrMarcos[numMarco].fueAccesado = 1
 						end
 						#Se checa adicionalmente si esta en memoria swap en caso de no estarlo en memoria real.
-						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
-						puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}"
-						puts "Proceso #{idProceso} genera page fault."
-						puts "La pagina sera cargada en memoria real para intentar accesarla"
-						#Si se encuentra en memoria swap se indica que que el proceso causo un page fault y se carga en memoria real.
-						proceso.faultsCausados = proceso.faultsCausados + 1
-						procesoTemp = self.getProceso(idProceso)
-						self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
+						if numMarco == indiceTablaPagina && item2.marcoSwap >= 0
+							puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}"
+							puts "Proceso #{idProceso} genera page fault."
+							puts "La pagina sera cargada en memoria real para intentar accesarla"
+							#Si se encuentra en memoria swap se indica que que el proceso causo un page fault y se carga en memoria real.
+							proceso.faultsCausados = proceso.faultsCausados + 1
+							if memReal.dispMarcos > 0
+								memSwap.arrMarcos[item2.marcoSwap].idProceso = -1
+								memSwap.arrMarcos[item2.marcoSwap].fueAccesado = -1
+								memSwap.arrMarcos[item2.marcoSwap].timestampCarga = -1
+							end
+							procesoTemp = self.getProceso(idProceso)
+							self.asignarMarcoPag(procesoTemp, memReal, memSwap, indiceTablaPagina)
 						end
 						#Se cambia al siguiente marco de memoria de real
 						numMarco = numMarco + 1
@@ -167,7 +173,6 @@ class Manejador
 		#Se calcula la cantidad de marcos que necesita el proceso restando los marcos que ya tiene asignados
 		#y su cantidad total de paginas.
 		cantPideMarcos = proceso.cantPaginas-proceso.marcosRealAsig
-		marcosSwapLibres = memSwap.dispMarcos
 		puts "Marcos Solicitados: #{cantPideMarcos}"
 		#Se checa si hay suficientes marcos disponibles para el proceso.
 		if cantPideMarcos <= memReal.dispMarcos
@@ -210,14 +215,10 @@ class Manejador
 			marcosNecesitados = cantPideMarcos
 			#Se hace una llamada a metodo que manda marcos de memoria real a swap hasta que hay suficiente
 			#espacio para el proceso.
-			#Se checa si hay suficientes marcos en memoria swap para realizar swapping.
-			if marcosSwapLibres >= marcosNecesitados
-				self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 				#Despues de liberar suficiente memoria real se hace una llamada recursiva a este metodo
 				#para asignar marcos.
 				self.asignarMarcos(proceso, memReal, memSwap)
-			else
-			puts "No queda memoria en swap para proceso #{proceso.id}"
 			end
 		end
 	end
@@ -231,7 +232,6 @@ class Manejador
 		puts "Marcos Disponibles: #{memReal.dispMarcos}"
 		#Se pide 1 marco de memoria real
 		cantPideMarcos = 1
-		marcosSwapLibres = memSwap.dispMarcos
 		puts "Marcos Solicitados: #{cantPideMarcos}"
 		#Se checa si hay suficientes marcos disponibles para el proceso.
 		if cantPideMarcos <= memReal.dispMarcos
@@ -285,13 +285,10 @@ class Manejador
 			marcosNecesitados = cantPideMarcos
 			#Se hace una llamada a metodo que manda marcos de memoria real a swap hasta que hay suficiente
 			#espacio para el proceso.
-			if marcosSwapLibres >= marcosNecesitados
-			self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-			#Despues de liberar suficiente memoria real se hace una llamada recursiva a este metodo
-			#para asignar marcos.
-			self.asignarMarcoPag(proceso, memReal, memSwap, pagina)
-			else
-			puts "No queda memoria en swap para proceso #{proceso.id}"
+			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+				#Despues de liberar suficiente memoria real se hace una llamada recursiva a este metodo
+				#para asignar marcos.
+				self.asignarMarcoPag(proceso, memReal, memSwap, pagina)
 			end
 		end
 	end
@@ -302,6 +299,8 @@ class Manejador
 	#donde se pondran los marcos intercambiados y los marcos necesitados por el proceso para ser cargado.
 	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 		puts "Se necesita realizar swapping para proceso #{proceso.id}"
+		#Se checa si hay suficientes marcos en memoria swap para realizar swapping.
+		if memSwap.dispMarcos >= marcosNecesitados
 			#Se hace un ciclo mientras la cantidad de marcos necesitados sea mayor que la cantidad
 			#de marcos disponibles en memoria real.
 			while marcosNecesitados > memReal.dispMarcos do
@@ -334,17 +333,7 @@ class Manejador
 					marcoSwap = self.ponerMarco(marcoTemp, memSwap)
 					#Variable que se manda por referencia a metodo de Proceso.rb indicePagina
 					#para obtener que pagina del proceso es.
-					contadorProvisional = 0
 					indicePaginaVieja = 0
-					procesoViejo.tablaPaginas.each do
-						|item2|
-						#Se calcula el marco de memoria real para la pagina y se checa si coinciden.
-						#Si coinciden se obtiene el indice de pagina que se swappeo
-						if item2.marcoReal == iViejo
-							indicePaginaVieja = contadorProvisional
-						end
-						contadorProvisional = contadorProvisional + 1
-					end
 					#Se busca el la pagina que estaba en el marco mas viejo.
 					paginaActualizar = procesoViejo.indicePagina(iViejo, indicePaginaVieja)
 					#Se actualiza la informacion de la pagina que se acaba de mandar a swap.
@@ -353,12 +342,8 @@ class Manejador
 					paginaActualizar.cargada = -1
 					#Se actualiza el marco de memoria real.
 					memReal.arrMarcos[iViejo].idProceso = -1
-					memReal.arrMarcos[iViejo].fueAccesado = 0
+					memReal.arrMarcos[iViejo].fueAccesado = -1
 					memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
-					#Se actualiza el marco de memoria Swap
-					memSwap.arrMarcos[marcoSwap].idProceso = idProcesoViejo
-					memSwap.arrMarcos[marcoSwap].fueAccesado = 0
-					memSwap.arrMarcos[marcoSwap].timestampCarga = self.timestamp
 					#Se actualiza la cantidad de marcos ocupados y disponibles en memoria
 					#real y memoria swap.
 					memReal.dispMarcos = memReal.dispMarcos + 1
@@ -367,8 +352,15 @@ class Manejador
 					memSwap.ocupMarcos = memSwap.ocupMarcos + 1
 					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
 					puts "Quedo en marco de swap #{marcoSwap}"
+					return true
+		#		else
+		#			puts "No se puede mandar a swap marco #{memReal.arrMarcos[iViejo].idProceso}"
 				end
 			end
+		else
+			puts "No queda memoria en swap para proceso #{proceso.id}"
+			return false
+		end
 	end
 
 	#Metodo que coloca un marco en un lugar disponible de memoria.
@@ -386,6 +378,13 @@ class Manejador
 		end
 	end
 
+	def turnaroundProceso(idProceso)
+		idProceso = Integer(idProceso)
+		proceso = self.getProceso(idProceso)
+		puts "Turnaround para proceso #{idProceso} es #{self.timestamp - proceso.timestampLlegada}"
+		return self.timestamp - proceso.timestampLlegada
+	end
+
 	#Metodo que obtiene un proceso de la lista de procesos del manejador dando
 	#el id del proceso.
 	def getProceso(id)
@@ -393,7 +392,7 @@ class Manejador
 		#Se itera sobre toda la lista de procesos.
 		@listaProcesos.size.times do
 			#Si coinciden los ids, se regresa el proceso.
-			if @listaProcesos[i].id == id
+			if Integer(@listaProcesos[i].id) == id
 				return @listaProcesos[i]
 			end
 			i = i+1
@@ -417,10 +416,9 @@ class Manejador
 					#Liberar paginas del proceso de memoria real
 					if item2.marcoReal >= 0
 					puts "La pagina en marco real #{item2.marcoReal} de proceso #{idProceso} fue liberada"
-					#Se actualiza la informacion del marco para indicar que esta vacio idProceso(-1), 
-					#fueAccesado(0), timestamp(-1)
+					#Se actualiza la informacion del marco para indicar que esta vacio (-1)
 					memReal.arrMarcos[item2.marcoReal].timestampCarga = -1
-					memReal.arrMarcos[item2.marcoReal].fueAccesado = 0
+					memReal.arrMarcos[item2.marcoReal].fueAccesado = -1
 					memReal.arrMarcos[item2.marcoReal].idProceso = -1
 					#Se actualiza la cantidad de marcos disponibles y ocupados en memoria real.
 					memReal.dispMarcos = memReal.dispMarcos + 1
@@ -431,7 +429,7 @@ class Manejador
 					if item2.marcoSwap >= 0
 					puts "La pagina en marco swap #{item2.marcoSwap} de proceso #{idProceso} fue liberada"
 					memSwap.arrMarcos[item2.marcoSwap].timestampCarga = -1
-					memSwap.arrMarcos[item2.marcoSwap].fueAccesado = 0
+					memSwap.arrMarcos[item2.marcoSwap].fueAccesado = -1
 					memSwap.arrMarcos[item2.marcoSwap].idProceso = -1
 					memSwap.dispMarcos = memSwap.dispMarcos + 1
 					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
@@ -449,6 +447,7 @@ class Manejador
 				|proceso|
 				if proceso.id == idProceso
 					#Se borra el proceso en la lista de procesos.
+					puts "Proceso #{proceso.id} genero #{proceso.faultsCausados} page faults"
 					@listaProcesos.delete_at(counter)
 				end
 				counter = counter + 1
@@ -497,12 +496,10 @@ class Manejador
 		end
 	end
 
-	#Metodo para poner el sistema en su estado inicial 
-	#(memoria real y swap vacia, ningun proceso en la lista de procesos).
+	#Metodo para poner el sistema en su estado inicial (memoria real y swap vacia, ningun proceso en la lista de procesos).
 	def reiniciarSistema(memReal, memSwap)
 		puts "Reiniciando sistema"
-		#Ya que el metodo liberar procesos libera marcos de memoria y real 
-		#y swap y despues borra el proceso, basta con llamar liberar
+		#Ya que el metodo liberar procesos libera marcos de memoria y real y swap y despues borra el proceso, basta con llamar liberar
 		#memoria para cada proceso.
 
 		cantVeces = @listaProcesos.size + 1
@@ -517,4 +514,6 @@ class Manejador
 			end
 		end
 	end
+
+
 end

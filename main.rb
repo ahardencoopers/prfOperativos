@@ -27,6 +27,7 @@ el primer parámetro indica el tamaño en bytes y el segundo parámetro indica e
 
 memReal = Memoria.new(2048, 8)
 memSwap = Memoria.new(4096, 8)
+arrTiempos = Array.new()
 bExit = false
 
 #Se crea una nueva instancia de la clase Manejador.rb que actua como el manejador de memoria.
@@ -67,12 +68,26 @@ while !bExit do
 			puts ""
 			puts "#{arrComando[0].upcase} #{arrComando[1]}"
 			puts "Liberando proceso #{arrComando[1]}"
+			tiempoTemp = so.turnaroundProceso(arrComando[1])
+			arrTiempos.push(tiempoTemp)
 			so.liberarProceso(arrComando[1], memReal, memSwap)
 			puts ""
 		when 'F'
 			#Se llama metodo de manejador para instruccion F.
 			puts 'F'
 			puts ""
+			so.listaProcesos.each do
+				|proceso|
+				idTemp = proceso.id
+				tiempoTemp = so.turnaroundProceso(idTemp)
+				arrTiempos.push(tiempoTemp)
+			end
+			acumTiempos = 0
+			arrTiempos.size.times do
+				|i|
+				acumTiempos = arrTiempos[i] + acumTiempos
+			end
+			puts "Turnaround promedio #{acumTiempos.fdiv(arrTiempos.size)}"
 			so.reiniciarSistema(memReal, memSwap)
 			so.mostrarSistema(memReal, memSwap)
 		when 'E'
