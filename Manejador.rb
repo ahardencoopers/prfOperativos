@@ -79,42 +79,6 @@ class Manejador
 		end
 	end
 
-	def accederProceso(direccion, idProceso, bitReferencia, memReal, memSwap)
-		procesoExiste = false
-		numMarco = 0
-		@listaProcesos.each do
-			|proceso|
-			if proceso.id == idProceso
-				procesoExiste = true
-				if proceso.cantBytes >= Integer(direccion)
-					proceso.tablaPaginas.each do
-						|item2|
-						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoReal >= 0
-						puts "La instruccion se encuentra cargada en marco real #{item2.marcoReal}, se ha accesado"
-						memReal.arrMarcos[numMarco].fueAccesado = 1
-						end
-						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
-						puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, no se ha accesado"
-						puts "Proceso #{idProceso} genera page fault."
-						proceso.faultsCausados = proceso.faultsCausados + 1
-						procesoTemp = self.getProceso(idProceso)
-						procesoTemp.desplegarProceso
-						puts procesoTemp.marcosRealAsig
-						self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
-						end
-						numMarco = numMarco + 1
-					end
-				else
-				puts "La direccion referenciada no es valida para el proceso #{idProceso}"
-				end
-			end
-		end
-
-		if !procesoExiste
-			puts "El proceso #{idProceso} esta mal definido o no existe"
-		end
-	end
-
 	# Metodo para Acceder a un Proceso con los parametros necesarios
 	# Se cambia del bit de referencia del Proceso cada vez que se accede a el
 	def accederProceso(direccion, idProceso, bitReferencia, memReal, memSwap)
