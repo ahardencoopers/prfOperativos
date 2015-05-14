@@ -153,11 +153,10 @@ class Manejador
 						end
 						#Se cambia al siguiente marco de memoria de real
 						numMarco = numMarco + 1
-						puts "no cumplio con ninguna de los criterios para accesar"
 					end
 				else
 				#Si la direccion virtual recibida no esta dentro del rango de direcciones virtual del proceso se indica un error.
-				puts "El idProceso No entra #{direccion} #{idProceso} #{bitReferencia}"
+				puts "La direcion no esta dentro del rango maximo para el proceso #{idProceso}"
 				end
 			end
 		end
