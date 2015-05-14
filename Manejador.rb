@@ -231,6 +231,7 @@ class Manejador
 		puts "Marcos Disponibles: #{memReal.dispMarcos}"
 		#Se pide 1 marco de memoria real
 		cantPideMarcos = 1
+		marcosSwapLibres = memSwap.dispMarcos
 		puts "Marcos Solicitados: #{cantPideMarcos}"
 		#Se checa si hay suficientes marcos disponibles para el proceso.
 		if cantPideMarcos <= memReal.dispMarcos
@@ -284,10 +285,13 @@ class Manejador
 			marcosNecesitados = cantPideMarcos
 			#Se hace una llamada a metodo que manda marcos de memoria real a swap hasta que hay suficiente
 			#espacio para el proceso.
-			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
-				#Despues de liberar suficiente memoria real se hace una llamada recursiva a este metodo
-				#para asignar marcos.
-				self.asignarMarcoPag(proceso, memReal, memSwap, pagina)
+			if marcosSwapLibres >= marcosNecesitados
+			self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+			#Despues de liberar suficiente memoria real se hace una llamada recursiva a este metodo
+			#para asignar marcos.
+			self.asignarMarcoPag(proceso, memReal, memSwap, pagina)
+			else
+			puts "No queda memoria en swap para proceso #{proceso.id}"
 			end
 		end
 	end
@@ -330,7 +334,17 @@ class Manejador
 					marcoSwap = self.ponerMarco(marcoTemp, memSwap)
 					#Variable que se manda por referencia a metodo de Proceso.rb indicePagina
 					#para obtener que pagina del proceso es.
+					contadorProvisional = 0
 					indicePaginaVieja = 0
+					procesoViejo.tablaPaginas.each do
+						|item2|
+						#Se calcula el marco de memoria real para la pagina y se checa si coinciden.
+						#Si coinciden se cambia el bit de referencia.
+						if item2.marcoReal == iViejo
+							indicePaginaVieja = contadorProvisional
+						end
+						contadorProvisional = contadorProvisional + 1
+					end
 					#Se busca el la pagina que estaba en el marco mas viejo.
 					paginaActualizar = procesoViejo.indicePagina(iViejo, indicePaginaVieja)
 					#Se actualiza la informacion de la pagina que se acaba de mandar a swap.
@@ -353,7 +367,6 @@ class Manejador
 		#			puts "No se puede mandar a swap marco #{memReal.arrMarcos[iViejo].idProceso}"
 				end
 			end
-		puts "termino de mandar swap"
 	end
 
 	#Metodo que coloca un marco en un lugar disponible de memoria.

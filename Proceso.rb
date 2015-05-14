@@ -75,8 +75,8 @@ class Proceso
 		@tablaPaginas.size.times do
 			#Se busca la pagina coincidiendo indices de marcos reales de memoria.
 			if @tablaPaginas[i].marcoReal == indiceMarcoReal
-				indiceTablaPaginas = i
 				#Cuando se encuentra la pagina se regresa.
+				indiceTablaPaginas = Integer(1)
 				return @tablaPaginas[i]
 			end
 			i = i+1
