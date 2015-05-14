@@ -58,5 +58,30 @@ Accion: Debe de cerrar el programa.
 
 Output: La instruccion y un mensaje de despedida.
 
+ESTRUCTURA DE CLASES DEL PROYECTO
+Main.rb
+	llama metodos de: Manejador.rb 
+						contiene: Proceso.rb
+									contiene: Pagina.rb
+Memoria.rb
+	contiene: Marco.rb
+
+
+ESPECIFICACIONES DE HARDWARE DE COMPUTADORA
+Modelo: 								Toshiba Satellite L655-S5150
+Procesador: 							Intel Pentium 2.13GHz
+Arquitectura:							i686 (32 bits)
+TIempo de ciclo MHz: 					933
+RAM: 									4GB
+Swap:									4GB
+Sistema Operativo:						GNU/Linux distribucion Ubuntu 14.04 (Trusty Tahr) LTS
+
+
+VERSION DE LENGUAJE UTILIZADA
+ruby 2.2.2p95 (2015-04-13 revision 50295) [i686-linux]
+
+
 Autores:
 Alberto Harden Cooper Saldivar a00811931
+José Elí Santiago Rodríguez a07025007
+Osmar Alan Hernandez Sanchez a01244070
