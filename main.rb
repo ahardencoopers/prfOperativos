@@ -49,7 +49,13 @@ while !bExit do
 		#La funcionalidad de cada comando se encuentra en la clase Manejador.
 		#Si los parametros del comando no son numeros enteros se indica un error, de lo contrario
 		#se sigue procesando el comando.
-		if ((is_numeric? arrComando[1]) || arrComando[1]==nil) && ((is_numeric? arrComando[2]) || arrComando[2]==nil) && ((is_numeric? arrComando[3]) || arrComando[3]==nil)
+		if archivo.eof?
+			puts "Fin de archivo."
+			puts "Cerrando programa."
+			puts "Goodbye."
+			exit
+		end
+		if ((is_numeric? arrComando[1]) || arrComando[1] == nil ) && (arrComando[2]==nil || (is_numeric? arrComando[2]) ) && (arrComando[3]==nil || (is_numeric? arrComando[3]))
 		case arrComando[0].upcase
 		when 'P'
 			#Se llama metodo de manejador para instruccion P
@@ -85,7 +91,9 @@ while !bExit do
 			acumTiempos = 0
 			arrTiempos.size.times do
 				|i|
-				acumTiempos = arrTiempos[i] + acumTiempos
+				if arrTiempos[i] != nil
+					acumTiempos = arrTiempos[i] + acumTiempos
+				end
 			end
 			puts "Turnaround promedio #{acumTiempos.fdiv(arrTiempos.size)}"
 			so.reiniciarSistema(memReal, memSwap)
