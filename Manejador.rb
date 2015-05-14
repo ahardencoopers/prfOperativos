@@ -97,7 +97,7 @@ class Manejador
 				#Se llama el metodo de manejador que asigna marcos para el proceso recien agregado a la lista.
 				self.asignarMarcos(@listaProcesos[-1], memReal, memSwap)
 			else
-				#Si el tamanio del proceso excede la memoria real se indica un error.
+				#Si el tamaño del proceso excede la memoria real se indica un error.
 				puts "El proceso no puede ser cargado, excede el tamaño de memoria real"
 			end
 		end
@@ -167,6 +167,7 @@ class Manejador
 		#Se calcula la cantidad de marcos que necesita el proceso restando los marcos que ya tiene asignados
 		#y su cantidad total de paginas.
 		cantPideMarcos = proceso.cantPaginas-proceso.marcosRealAsig
+		marcosSwapLibres = memSwap.dispMarcos
 		puts "Marcos Solicitados: #{cantPideMarcos}"
 		#Se checa si hay suficientes marcos disponibles para el proceso.
 		if cantPideMarcos <= memReal.dispMarcos
@@ -209,10 +210,14 @@ class Manejador
 			marcosNecesitados = cantPideMarcos
 			#Se hace una llamada a metodo que manda marcos de memoria real a swap hasta que hay suficiente
 			#espacio para el proceso.
-			if self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
+			#Se checa si hay suficientes marcos en memoria swap para realizar swapping.
+			if marcosSwapLibres >= marcosNecesitados
+				self.mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 				#Despues de liberar suficiente memoria real se hace una llamada recursiva a este metodo
 				#para asignar marcos.
 				self.asignarMarcos(proceso, memReal, memSwap)
+			else
+			puts "No queda memoria en swap para proceso #{proceso.id}"
 			end
 		end
 	end
@@ -293,8 +298,6 @@ class Manejador
 	#donde se pondran los marcos intercambiados y los marcos necesitados por el proceso para ser cargado.
 	def mandarSwap(proceso, memReal, memSwap, marcosNecesitados)
 		puts "Se necesita realizar swapping para proceso #{proceso.id}"
-		#Se checa si hay suficientes marcos en memoria swap para realizar swapping.
-		if memSwap.dispMarcos >= marcosNecesitados
 			#Se hace un ciclo mientras la cantidad de marcos necesitados sea mayor que la cantidad
 			#de marcos disponibles en memoria real.
 			while marcosNecesitados > memReal.dispMarcos do
@@ -346,17 +349,10 @@ class Manejador
 					memSwap.ocupMarcos = memSwap.ocupMarcos + 1
 					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
 					puts "Quedo en marco de swap #{marcoSwap}"
-					puts memSwap.dispMarcos
-					marcosNecesitados = marcosNecesitados - 1
-					return true
 		#		else
 		#			puts "No se puede mandar a swap marco #{memReal.arrMarcos[iViejo].idProceso}"
 				end
 			end
-		else
-			puts "No queda memoria en swap para proceso #{proceso.id}"
-			return false
-		end
 		puts "termino de mandar swap"
 	end
 
