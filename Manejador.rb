@@ -45,26 +45,28 @@ class Manejador
 		arrTemp = Array.new()
 		#Checar que tipo de solicitud es y regresar un arreglo con los datos
 		#necesarios para atender esa solicutud.
-		if arrComando[0].upcase == 'P'  # Existe
-			arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
-			return arrTemp
-		elsif arrComando[0].upcase == 'A' # Existe
-			# MODIFICADO
-			arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
-			return arrTemp
-			#puts "Instr A"
-		elsif arrComando[0].upcase == 'L' # Liberar - No Existe
-			arrTemp.push(arrComando[0], arrComando[1])
-			return arrTemp
-		elsif arrComando[0].upcase == 'F' # Fin - No Existe
-			arrTemp.push(arrComando[0])
-			return arrTemp
-		elsif arrComando[0].upcase == 'E' # Exit - No Existe
-			arrTemp.push(arrComando[0])
-			return arrTemp
-		else
-			#Si no se pudo crear una solicitud regresar un arreglo nulo.
-			return arrTemp.push(nil, arrComando[0])
+		if arrComando[0] != nil
+			if arrComando[0].upcase == 'P'  # Existe
+				arrTemp.push(arrComando[0], arrComando[1], arrComando[2])
+				return arrTemp
+			elsif arrComando[0].upcase == 'A' # Existe
+				# MODIFICADO
+				arrTemp.push(arrComando[0], arrComando[1], arrComando[2], arrComando[3])
+				return arrTemp
+				#puts "Instr A"
+			elsif arrComando[0].upcase == 'L' # Liberar - No Existe
+				arrTemp.push(arrComando[0], arrComando[1])
+				return arrTemp
+			elsif arrComando[0].upcase == 'F' # Fin - No Existe
+				arrTemp.push(arrComando[0])
+				return arrTemp
+			elsif arrComando[0].upcase == 'E' # Exit - No Existe
+				arrTemp.push(arrComando[0])
+				return arrTemp
+			else
+				#Si no se pudo crear una solicitud regresar un arreglo nulo.
+				return arrTemp.push(nil, arrComando[0])
+			end
 		end
 	end
 
@@ -145,7 +147,9 @@ class Manejador
 								memSwap.arrMarcos[item2.marcoSwap].timestampCarga = -1
 							end
 							procesoTemp = self.getProceso(idProceso)
-							self.asignarMarcoPag(procesoTemp, memReal, memSwap, indiceTablaPagina)
+							if procesoTemp != false
+								self.asignarMarcoPag(procesoTemp, memReal, memSwap, indiceTablaPagina)
+							end
 						end
 						#Se cambia al siguiente marco de memoria de real
 						numMarco = numMarco + 1
@@ -378,24 +382,36 @@ class Manejador
 		end
 	end
 
+	#Metodo para calcular el turnaround de un proceso.
+	#Recibe el id del proceso.
 	def turnaroundProceso(idProceso)
 		idProceso = Integer(idProceso)
 		proceso = self.getProceso(idProceso)
-		puts "Turnaround para proceso #{idProceso} es #{self.timestamp - proceso.timestampLlegada}"
-		return self.timestamp - proceso.timestampLlegada
+		if proceso != false
+			puts "Turnaround para proceso #{idProceso} es #{self.timestamp - proceso.timestampLlegada}"
+			return self.timestamp - proceso.timestampLlegada
+		end
 	end
 
 	#Metodo que obtiene un proceso de la lista de procesos del manejador dando
 	#el id del proceso.
 	def getProceso(id)
 		i = 0
-		#Se itera sobre toda la lista de procesos.
+		encontroProceso = false #Se itera sobre toda la lista de procesos.
 		@listaProcesos.size.times do
 			#Si coinciden los ids, se regresa el proceso.
-			if Integer(@listaProcesos[i].id) == id
+			puts "size #{listaProcesos.size}"
+			puts "#{Integer(@listaProcesos[i].id).class} #{Integer(id).class}"
+			puts "#{Integer(@listaProcesos[i].id)} #{Integer(id)}"
+			if Integer(@listaProcesos[i].id) == Integer(id)
 				return @listaProcesos[i]
+				encontroProceso = true
 			end
 			i = i+1
+		end
+
+		if !encontroProceso
+			return false
 		end
 	end
 
