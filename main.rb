@@ -61,7 +61,6 @@ while !bExit do
 			puts ""
 			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[3]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
-			so.mostrarSistema(memReal, memSwap)
 			puts ""
 		when 'L'
 			#Se llama metodo de manejador para instruccion L.
