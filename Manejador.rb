@@ -132,13 +132,14 @@ class Manejador
 						memReal.arrMarcos[numMarco].fueAccesado = 1
 						end
 						if numMarco == Integer(direccion).fdiv(memReal.tamPagina).floor && item2.marcoSwap >= 0
-						puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, no se ha accesado"
+						puts "La instruccion se encuentra cargada en marco swap #{item2.marcoSwap}, se ha cargado en memoria real y accesado"
 						puts "Proceso #{idProceso} genera page fault."
 						proceso.faultsCausados = proceso.faultsCausados + 1
 						procesoTemp = self.getProceso(idProceso)
 						procesoTemp.desplegarProceso
 						puts procesoTemp.marcosRealAsig
 						self.asignarMarcoPag(procesoTemp, memReal, memSwap, Integer(direccion).fdiv(memReal.tamPagina).floor)
+						memReal.arrMarcos[numMarco].fueAccesado = 1
 						end
 						numMarco = numMarco + 1
 					end
@@ -283,9 +284,14 @@ class Manejador
 					memReal.dispMarcos = memReal.dispMarcos + 1
 					memReal.ocupMarcos = memReal.ocupMarcos - 1
 					memSwap.dispMarcos = memSwap.dispMarcos - 1
-					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
+					memSwap.ocupMarcos = memSwap.ocupMarcos + 1 #como es que estaba funcionando entonces?
 					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
 					puts "Quedo en marco de swap #{marcoSwap}"
+					return true
+				end
+				if memReal.arrMarcos[iViejo].idProceso == -1
+					memReal.dispMarcos = memReal.dispMarcos + 1
+					memReal.ocupMarcos = memReal.ocupMarcos - 1
 					return true
 				end
 			end
