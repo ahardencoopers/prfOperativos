@@ -336,7 +336,7 @@ class Manejador
 					paginaActualizar.cargada = -1
 					#Se actualiza el marco de memoria real.
 					memReal.arrMarcos[iViejo].idProceso = -1
-					memReal.arrMarcos[iViejo].fueAccesado = -1
+					memReal.arrMarcos[iViejo].fueAccesado = 0
 					memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
 					#Se actualiza la cantidad de marcos ocupados y disponibles en memoria
 					#real y memoria swap.
@@ -346,6 +346,8 @@ class Manejador
 					memSwap.ocupMarcos = memSwap.ocupMarcos + 1
 					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
 					puts "Quedo en marco de swap #{marcoSwap}"
+					puts memSwap.dispMarcos
+					marcosNecesitados = marcosNecesitados - 1
 					return true
 		#		else
 		#			puts "No se puede mandar a swap marco #{memReal.arrMarcos[iViejo].idProceso}"
@@ -355,6 +357,7 @@ class Manejador
 			puts "No queda memoria en swap para proceso #{proceso.id}"
 			return false
 		end
+		puts "termino de mandar swap"
 	end
 
 	#Metodo que coloca un marco en un lugar disponible de memoria.
@@ -405,7 +408,7 @@ class Manejador
 					puts "La pagina en marco real #{item2.marcoReal} de proceso #{idProceso} fue liberada"
 					#Se actualiza la informacion del marco para indicar que esta vacio (-1)
 					memReal.arrMarcos[item2.marcoReal].timestampCarga = -1
-					memReal.arrMarcos[item2.marcoReal].fueAccesado = -1
+					memReal.arrMarcos[item2.marcoReal].fueAccesado = 0
 					memReal.arrMarcos[item2.marcoReal].idProceso = -1
 					#Se actualiza la cantidad de marcos disponibles y ocupados en memoria real.
 					memReal.dispMarcos = memReal.dispMarcos + 1
@@ -416,7 +419,7 @@ class Manejador
 					if item2.marcoSwap >= 0
 					puts "La pagina en marco swap #{item2.marcoSwap} de proceso #{idProceso} fue liberada"
 					memSwap.arrMarcos[item2.marcoSwap].timestampCarga = -1
-					memSwap.arrMarcos[item2.marcoSwap].fueAccesado = -1
+					memSwap.arrMarcos[item2.marcoSwap].fueAccesado = 0
 					memSwap.arrMarcos[item2.marcoSwap].idProceso = -1
 					memSwap.dispMarcos = memSwap.dispMarcos + 1
 					memSwap.ocupMarcos = memSwap.ocupMarcos - 1
