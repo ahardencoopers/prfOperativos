@@ -46,15 +46,17 @@ while !bExit do
 		#en un arreglo.
 		arrComando = so.recibComando(line)
 
-		#La funcionalidad de cada comando se encuentra en la clase Manejador.
-		#Si los parametros del comando no son numeros enteros se indica un error, de lo contrario
-		#se sigue procesando el comando.
+		#Detectar el fin de archivo para salir del programa.
 		if archivo.eof?
 			puts "Fin de archivo."
 			puts "Cerrando programa."
 			puts "Goodbye."
 			exit
 		end
+
+		#La funcionalidad de cada comando se encuentra en la clase Manejador.
+		#Si los parametros del comando no son numeros enteros se indica un error, de lo contrario
+		#se sigue procesando el comando.
 		if ((is_numeric? arrComando[1]) || arrComando[1] == nil ) && (arrComando[2]==nil || (is_numeric? arrComando[2]) ) && (arrComando[3]==nil || (is_numeric? arrComando[3]))
 		case arrComando[0].upcase
 		when 'P'
@@ -82,6 +84,7 @@ while !bExit do
 			#Se llama metodo de manejador para instruccion F.
 			puts 'F'
 			puts ""
+			#Calcular el turnaroun time de cada proceso.
 			so.listaProcesos.each do
 				|proceso|
 				idTemp = proceso.id
@@ -89,6 +92,7 @@ while !bExit do
 				arrTiempos.push(tiempoTemp)
 			end
 			acumTiempos = 0
+			#Calcular el turnaround time promedio
 			arrTiempos.size.times do
 				|i|
 				if arrTiempos[i] != nil

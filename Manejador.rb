@@ -382,6 +382,8 @@ class Manejador
 		end
 	end
 
+	#Metodo para calcular el turnaround de un proceso.
+	#Recibe el id del proceso.
 	def turnaroundProceso(idProceso)
 		idProceso = Integer(idProceso)
 		proceso = self.getProceso(idProceso)
