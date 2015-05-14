@@ -541,6 +541,20 @@ class Manejador
 					liberarProceso(proceso.id, memReal, memSwap)
 			end
 		end
+		self.purgarMemoria(memReal)
+		self.purgarMemoria(memSwap)
+	end
+
+	#Metodo para purgar toda la memoria y dejarla vacia.
+	#Recibe una memoria para purgar.
+	def purgarMemoria(memoria)
+		memoria.arrMarcos.each do
+			|item|
+			puts item.class
+			item.idProceso = -1
+			item.fueAccesado = -1
+			item.timestampCarga = -1
+		end
 	end
 
 
