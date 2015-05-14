@@ -521,10 +521,7 @@ class Manejador
 			|i|
 			@listaProcesos.each do
 				|proceso|
-				idTemp = Integer(proceso.id)
-				if i == idTemp
 					liberarProceso(proceso.id, memReal, memSwap)
-				end
 			end
 		end
 	end
