@@ -253,7 +253,7 @@ class Manejador
 					memReal.ocupMarcos = memReal.ocupMarcos + 1
 					#Se indica que al proceso tiene una marco de memoria real asignado.
 					proceso.marcosRealAsig = proceso.marcosRealAsig + 1
-					proceso.marcosRealAsig = proceso.marcosSwapAsig - 1
+					proceso.marcosSwapAsig = proceso.marcosSwapAsig - 1
 					puts "Se alojo marco real #{marcoRealActual} para pagina #{Integer(pagina)}"
 					#Se actualiza la informacion de la pagina que se acaba de mandar a memoria real.
 					proceso.tablaPaginas[Integer(pagina)].marcoReal = marcoRealActual
