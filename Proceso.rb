@@ -87,7 +87,7 @@ class Proceso
 			#Se busca la pagina coincidiendo indices de marcos reales de memoria.
 			if @tablaPaginas[i].marcoReal == indiceMarcoReal
 				#Cuando se encuentra la pagina se regresa.
-				indiceTablaPaginas = Integer(1)
+				indiceTablaPaginas = Integer(i)
 				return @tablaPaginas[i]
 			end
 			i = i+1
