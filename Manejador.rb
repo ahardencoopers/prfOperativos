@@ -291,6 +291,7 @@ class Manejador
 		else
 			#En caso de no haber suficiente memorial real para el proceso se aplica
 			#politica de reemplzao FIFO 2nd chance.
+			puts ""
 			puts "F2C"
 			#Se crea una variable con la cantidad de marcos necesitados por el proceso.
 			marcosNecesitados = cantPideMarcos
@@ -418,9 +419,6 @@ class Manejador
 		encontroProceso = false #Se itera sobre toda la lista de procesos.
 		@listaProcesos.size.times do
 			#Si coinciden los ids, se regresa el proceso.
-			puts "size #{listaProcesos.size}"
-			puts "#{Integer(@listaProcesos[i].id).class} #{Integer(id).class}"
-			puts "#{Integer(@listaProcesos[i].id)} #{Integer(id)}"
 			if Integer(@listaProcesos[i].id) == Integer(id)
 				return @listaProcesos[i]
 				encontroProceso = true
@@ -541,10 +539,7 @@ class Manejador
 			|i|
 			@listaProcesos.each do
 				|proceso|
-				idTemp = Integer(proceso.id)
-				if i == idTemp
 					liberarProceso(proceso.id, memReal, memSwap)
-				end
 			end
 		end
 	end
