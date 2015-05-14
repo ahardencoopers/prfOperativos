@@ -355,7 +355,8 @@ class Manejador
 					memReal.arrMarcos[iViejo].idProceso = -1
 					memReal.arrMarcos[iViejo].fueAccesado = 0
 					memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
-					memSwap.arrMarcos[marcoSwap].idProceso = -1
+					#Se actualiza el marco de memoria Swap
+					memSwap.arrMarcos[marcoSwap].idProceso = idProcesoViejo
 					memSwap.arrMarcos[marcoSwap].fueAccesado = 0
 					memSwap.arrMarcos[marcoSwap].timestampCarga = self.timestamp
 					#Se actualiza la cantidad de marcos ocupados y disponibles en memoria
@@ -366,8 +367,6 @@ class Manejador
 					memSwap.ocupMarcos = memSwap.ocupMarcos + 1
 					puts "Se swappeo pagina #{indicePaginaVieja} de proceso #{procesoViejo.id}"
 					puts "Quedo en marco de swap #{marcoSwap}"
-		#		else
-		#			puts "No se puede mandar a swap marco #{memReal.arrMarcos[iViejo].idProceso}"
 				end
 			end
 	end
@@ -418,7 +417,8 @@ class Manejador
 					#Liberar paginas del proceso de memoria real
 					if item2.marcoReal >= 0
 					puts "La pagina en marco real #{item2.marcoReal} de proceso #{idProceso} fue liberada"
-					#Se actualiza la informacion del marco para indicar que esta vacio (-1)
+					#Se actualiza la informacion del marco para indicar que esta vacio idProceso(-1), 
+					#fueAccesado(0), timestamp(-1)
 					memReal.arrMarcos[item2.marcoReal].timestampCarga = -1
 					memReal.arrMarcos[item2.marcoReal].fueAccesado = 0
 					memReal.arrMarcos[item2.marcoReal].idProceso = -1
@@ -497,10 +497,12 @@ class Manejador
 		end
 	end
 
-	#Metodo para poner el sistema en su estado inicial (memoria real y swap vacia, ningun proceso en la lista de procesos).
+	#Metodo para poner el sistema en su estado inicial 
+	#(memoria real y swap vacia, ningun proceso en la lista de procesos).
 	def reiniciarSistema(memReal, memSwap)
 		puts "Reiniciando sistema"
-		#Ya que el metodo liberar procesos libera marcos de memoria y real y swap y despues borra el proceso, basta con llamar liberar
+		#Ya que el metodo liberar procesos libera marcos de memoria y real 
+		#y swap y despues borra el proceso, basta con llamar liberar
 		#memoria para cada proceso.
 
 		cantVeces = @listaProcesos.size + 1
