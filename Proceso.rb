@@ -33,7 +33,14 @@ class Proceso
 		@marcosRealAsig = 0
 		@marcosSwapAsig = 0
 		@faultsCausados = 0
+		@timestampLlegada = self.timestamp
 
+	end
+
+	#Metodo que crea una UNIX timestamp .
+	#(Cantidad de segundos desde Enero 1, 1970).
+	def timestamp
+		Time.now.to_i
 	end
 
 	#Metodos para obtener atributos del proceso.
@@ -63,6 +70,10 @@ class Proceso
 
 	def faultsCausados
 		@faultsCausados
+	end
+
+	def timestampLlegada
+		@timestampLlegada
 	end
 
 	#Metodo para obtener una pagina del proceso sabiendo donde
