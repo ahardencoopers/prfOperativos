@@ -2,7 +2,7 @@ Proyecto Final de Sistemas Operativos
 ITESM Enero-Mayo 2015
 Profesor Jorge Luiz Garza
 
-Descripcion:
+DESCRIPCION
 Manejador de memoria virtual con paginacion y politica de reemplazo FIFO 2nd chance.
 Los procesos pueden hacer solicitudes a memoria a traves de un archivo de texto llamado "datos.txt".
 Las solicitudes que pueden realizar los procesos son: pedir memoria y acceder una direccion virtual y liberar las paginas que tienen
@@ -10,8 +10,7 @@ alojadas. El archivo "datos.txt" debe estar en la misma carpeta que el archivo "
 Se utilizan paginas de 8 bytes. Cuando un proceso es cargado en memoria no se cuentan page faults, sin
 embargo la siguiente vez que se cargue una pagina en memoria de un proceso por cualquier otra razon se cuenta como page fault.
 
-Formato y detalles de solicitudes
-
+FORMATO Y DETALLE DE LAS SOLICITUDES
 Pedir ser cargado en memoria*
 Formato: P cantBytes idProceso Donde P indica la instruccion, cantBytes es el tamanio en bytes del proceso
 y idProceso es el identificador unico del proceso.
@@ -80,6 +79,9 @@ Sistema Operativo:						GNU/Linux distribucion Ubuntu 14.04 (Trusty Tahr) LTS
 VERSION DE LENGUAJE UTILIZADA
 ruby 2.2.2p95 (2015-04-13 revision 50295) [i686-linux]
 
+INSTRUCCIONES PARA CORRER EL PROGRAMA
+ingresar la siguiente linea en la terminal de comandos
+ruby main.rb
 
 Autores:
 Alberto Harden Cooper Saldivar a00811931
