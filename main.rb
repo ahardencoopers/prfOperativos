@@ -25,8 +25,8 @@ En seguida se declaran los objetos de memoria real y memoria swap,
 el primer parámetro indica el tamaño en bytes y el segundo parámetro indica el tamaño de página en bytes.
 =end
 
-memReal = Memoria.new(64, 8)
-memSwap = Memoria.new(80, 8)
+memReal = Memoria.new(2048, 8)
+memSwap = Memoria.new(4096, 8)
 bExit = false
 
 #Se crea una nueva instancia de la clase Manejador.rb que actua como el manejador de memoria.
@@ -59,10 +59,8 @@ while !bExit do
 		when 'A'
 			#Se llama metodo de manejador para instruccion A.
 			puts ""
-			so.mostrarSistema(memReal, memSwap)
 			puts "#{arrComando[0].upcase} #{arrComando[1]} #{arrComando[2]} #{arrComando[3]}"
 			so.accederProceso(arrComando[1], arrComando[2], arrComando[3], memReal, memSwap)
-			so.mostrarSistema(memReal, memSwap)
 			puts ""
 		when 'L'
 			#Se llama metodo de manejador para instruccion L.

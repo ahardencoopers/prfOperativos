@@ -45,7 +45,7 @@ class Memoria
 		@cantMarcos.times do
 			|i|
 			#Se crea un nuevo marco que se pondra en el arreglo de marcos.
-			marcoTemp = Marco.new(-1, -1, -1)
+			marcoTemp = Marco.new(-1, 0, -1)
 			#Se pone el marco vacio en memoria.
 			@arrMarcos[i] = marcoTemp
 		end

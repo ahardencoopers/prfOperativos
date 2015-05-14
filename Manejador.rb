@@ -339,7 +339,7 @@ class Manejador
 					procesoViejo.tablaPaginas.each do
 						|item2|
 						#Se calcula el marco de memoria real para la pagina y se checa si coinciden.
-						#Si coinciden se cambia el bit de referencia.
+						#Si coinciden se obtiene el indice de pagina que se swappeo
 						if item2.marcoReal == iViejo
 							indicePaginaVieja = contadorProvisional
 						end
@@ -355,6 +355,9 @@ class Manejador
 					memReal.arrMarcos[iViejo].idProceso = -1
 					memReal.arrMarcos[iViejo].fueAccesado = 0
 					memReal.arrMarcos[iViejo].timestampCarga = self.timestamp
+					memSwap.arrMarcos[marcoSwap].idProceso = -1
+					memSwap.arrMarcos[marcoSwap].fueAccesado = 0
+					memSwap.arrMarcos[marcoSwap].timestampCarga = self.timestamp
 					#Se actualiza la cantidad de marcos ocupados y disponibles en memoria
 					#real y memoria swap.
 					memReal.dispMarcos = memReal.dispMarcos + 1
